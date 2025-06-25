@@ -578,16 +578,6 @@ DownloadAndInstallCasaOS() {
         fi
     done
     
-    MIGRATION_SCRIPT_DIR=$(realpath -e "${BUILD_DIR}"/scripts/migration/script.d || Show 1 "Failed to find migration script directory")
-
-    for MIGRATION_SCRIPT in "${MIGRATION_SCRIPT_DIR}"/*.sh; do
-        Show 2 "Running ${MIGRATION_SCRIPT}..."
-
-        ${sudo_cmd} bash "${MIGRATION_SCRIPT}" || Show 1 "Failed to run migration script"
-
-    done
-
-
     Show 2 "Installing CasaOS..."
     SYSROOT_DIR=$(realpath -e "${BUILD_DIR}"/sysroot || Show 1 "Failed to find sysroot directory")
 
