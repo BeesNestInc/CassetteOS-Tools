@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 #
 #           CassetteOS Installer Script v0.4.15#
-#   GitHub: https://github.com/mayumigit/CasaOS
+#   GitHub: https://github.com/BeesNestInc/CassetteOS
 #   Requires: bash, mv, rm, tr, grep, sed, curl/wget, tar, smartmontools, parted, ntfs-3g, net-tools
 #
 #   This script installs CassetteOS to your system.
@@ -73,9 +73,9 @@ readonly UNAME_M
 UNAME_U="$(uname -s)"
 readonly UNAME_U
 
-readonly CASA_CONF_PATH=/etc/casaos/gateway.ini
+readonly CASA_CONF_PATH=/etc/cassetteos/gateway.ini
 readonly CASA_UNINSTALL_URL="https://get.casaos.io/uninstall/v0.4.15"
-readonly CASA_UNINSTALL_PATH=/usr/bin/casaos-uninstall
+readonly CASA_UNINSTALL_PATH=/usr/bin/cassetteos-uninstall
 
 # REQUIREMENTS CONF PATH
 # Udevil
@@ -98,7 +98,7 @@ readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
 
 # CASAOS VARIABLES
 TARGET_ARCH=""
-TMP_ROOT=/tmp/casaos-installer
+TMP_ROOT=/tmp/cassetteos-installer
 REGION="UNKNOWN"
 CASA_DOWNLOAD_DOMAIN="https://github.com/"
 
@@ -199,27 +199,27 @@ Check_Arch() {
     esac
     Show 0 "Your hardware architecture is : $UNAME_M"
     CASA_PACKAGES=(
-        "${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-casaos-gateway-v0.4.9-alpha4.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-casaos-message-bus-v0.4.4-3-alpha2.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-casaos-user-service-v0.4.8.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-casaos-local-storage-v0.4.4.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-casaos-app-management-v0.4.10-alpha2.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-casaos-v0.4.15.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-casaos-cli-v0.4.4-3-alpha1.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-UI/releases/download/v0.4.20/linux-all-casaos-v0.4.20.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
+        "${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-cassetteos-gateway-v0.4.9-alpha4.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-cassetteos-message-bus-v0.4.4-3-alpha2.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-cassetteos-user-service-v0.4.8.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-cassetteos-local-storage-v0.4.4.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-cassetteos-app-management-v0.4.10-alpha2.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-cassetteos-v0.4.15.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-cassetteos-cli-v0.4.4-3-alpha1.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UI/releases/download/v0.4.20/linux-all-cassetteos-v0.4.20.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
     )
 }
 
 # PACKAGE LIST OF CASAOS (make sure the services are in the right order)
 CASA_SERVICES=(
-    "casaos-gateway.service"
-"casaos-message-bus.service"
-"casaos-user-service.service"
-"casaos-local-storage.service"
-"casaos-app-management.service"
+    "cassetteos-gateway.service"
+"cassetteos-message-bus.service"
+"cassetteos-user-service.service"
+"cassetteos-local-storage.service"
+"cassetteos-app-management.service"
 "rclone.service"
-"casaos.service"  # must be the last one so update from UI can work 
+"cassetteos.service"  # must be the last one so update from UI can work 
 )
 
 # 2 Check Distribution
@@ -414,7 +414,7 @@ Check_Docker_Install() {
         if [[ $? -ne 0 ]]; then
             Install_Docker
         elif [[ ${Docker_Version:0:2} -lt "${MINIMUM_DOCKER_VERSION}" ]]; then
-            Show 1 "Recommended minimum Docker version is \e[33m${MINIMUM_DOCKER_VERSION}.xx.xx\e[0m,\Current Docker version is \e[33m${Docker_Version}\e[0m,\nPlease uninstall current Docker and rerun the CasaOS installation script."
+            Show 1 "Recommended minimum Docker version is \e[33m${MINIMUM_DOCKER_VERSION}.xx.xx\e[0m,\Current Docker version is \e[33m${Docker_Version}\e[0m,\nPlease uninstall current Docker and rerun the CassetteOS installation script."
             exit 1
         else
             Show 0 "Current Docker version is ${Docker_Version}."
@@ -431,14 +431,14 @@ Check_Docker_Install_Final() {
         if [[ $? -ne 0 ]]; then
             Install_Docker
         elif [[ ${Docker_Version:0:2} -lt "${MINIMUM_DOCKER_VERSION}" ]]; then
-            Show 1 "Recommended minimum Docker version is \e[33m${MINIMUM_DOCKER_VERSION}.xx.xx\e[0m,\Current Docker version is \e[33m${Docker_Version}\e[0m,\nPlease uninstall current Docker and rerun the CasaOS installation script."
+            Show 1 "Recommended minimum Docker version is \e[33m${MINIMUM_DOCKER_VERSION}.xx.xx\e[0m,\Current Docker version is \e[33m${Docker_Version}\e[0m,\nPlease uninstall current Docker and rerun the CassetteOS installation script."
             exit 1
         else
             Show 0 "Current Docker version is ${Docker_Version}."
             Check_Docker_Running
         fi
     else
-        Show 1 "Installation failed, please run 'curl -fsSL https://get.docker.com | bash' and rerun the CasaOS installation script."
+        Show 1 "Installation failed, please run 'curl -fsSL https://get.docker.com | bash' and rerun the CassetteOS installation script."
         exit 1
     fi
 }
@@ -507,7 +507,7 @@ Install_Rclone() {
 
 #Configuration Addons
 Configuration_Addons() {
-    Show 2 "Configuration CasaOS Addons"
+    Show 2 "Configuration CassetteOS Addons"
     #Remove old udev rules
     if [[ -f "${PREFIX}/etc/udev/rules.d/11-usb-mount.rules" ]]; then
         ${sudo_cmd} rm -rf "${PREFIX}/etc/udev/rules.d/11-usb-mount.rules"
@@ -541,8 +541,8 @@ Configuration_Addons() {
     fi
 }
 
-# Download And Install CasaOS
-DownloadAndInstallCasaOS() {
+# Download And Install CassetteOS
+DownloadAndInstallCassetteOS() {
     if [ -z "${BUILD_DIR}" ]; then
         ${sudo_cmd} rm -rf ${TMP_ROOT}
         mkdir -p ${TMP_ROOT} || Show 1 "Failed to create temporary directory"
@@ -578,17 +578,17 @@ DownloadAndInstallCasaOS() {
         fi
     done
     
-    Show 2 "Installing CasaOS..."
+    Show 2 "Installing CassetteOS..."
     SYSROOT_DIR=$(realpath -e "${BUILD_DIR}"/sysroot || Show 1 "Failed to find sysroot directory")
 
     # Generate manifest for uninstallation
-    MANIFEST_FILE=${BUILD_DIR}/sysroot/var/lib/casaos/manifest
+    MANIFEST_FILE=${BUILD_DIR}/sysroot/var/lib/cassetteos/manifest
     ${sudo_cmd} touch "${MANIFEST_FILE}" || Show 1 "Failed to create manifest file"
 
     GreyStart
     find "${SYSROOT_DIR}" -type f | ${sudo_cmd} cut -c ${#SYSROOT_DIR}- | ${sudo_cmd} cut -c 2- | ${sudo_cmd} tee "${MANIFEST_FILE}" >/dev/null || Show 1 "Failed to create manifest file"
 
-    ${sudo_cmd} cp -rf "${SYSROOT_DIR}"/* / || Show 1 "Failed to install CasaOS"
+    ${sudo_cmd} cp -rf "${SYSROOT_DIR}"/* / || Show 1 "Failed to install CassetteOS"
     ColorReset
 
     SETUP_SCRIPT_DIR=$(realpath -e "${BUILD_DIR}"/scripts/setup/script.d || Show 1 "Failed to find setup script directory")
@@ -600,7 +600,7 @@ DownloadAndInstallCasaOS() {
         ColorReset
     done
     
-    UI_EVENTS_REG_SCRIPT=/etc/casaos/start.d/register-ui-events.sh
+    UI_EVENTS_REG_SCRIPT=/etc/cassetteos/start.d/register-ui-events.sh
     if [[ -f ${UI_EVENTS_REG_SCRIPT} ]]; then
         ${sudo_cmd} chmod +x $UI_EVENTS_REG_SCRIPT
     fi
@@ -609,11 +609,11 @@ DownloadAndInstallCasaOS() {
     sed -i "s#https://github.com/IceWhaleTech/_appstore/#${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/_appstore/#g" "$PREFIX/etc/casaos/app-management.conf"
 
     #Download Uninstall Script
-    if [[ -f $PREFIX/tmp/casaos-uninstall ]]; then
-        ${sudo_cmd} rm -rf "$PREFIX/tmp/casaos-uninstall"
+    if [[ -f $PREFIX/tmp/cassetteos-uninstall ]]; then
+        ${sudo_cmd} rm -rf "$PREFIX/tmp/cassetteos-uninstall"
     fi
-    ${sudo_cmd} curl -fsSLk "$CASA_UNINSTALL_URL" >"$PREFIX/tmp/casaos-uninstall"
-    ${sudo_cmd} cp -rf "$PREFIX/tmp/casaos-uninstall" $CASA_UNINSTALL_PATH || {
+    ${sudo_cmd} curl -fsSLk "$CASA_UNINSTALL_URL" >"$PREFIX/tmp/cassetteos-uninstall"
+    ${sudo_cmd} cp -rf "$PREFIX/tmp/cassetteos-uninstall" $CASA_UNINSTALL_PATH || {
         Show 1 "Download uninstall script failed, Please check if your internet connection is working and retry."
         exit 1
     }
@@ -665,22 +665,18 @@ Get_IPs() {
 
 # Show Welcome Banner
 Welcome_Banner() {
-    CASA_TAG=$(casaos -v)
+    CASA_TAG=$(cassetteos -v)
 
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
-    echo -e " CasaOS ${CASA_TAG}${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
+    echo -e " CassetteOS ${CASA_TAG}${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
     Get_IPs
     echo -e " Open your browser and visit the above address."
     echo -e "${GREEN_LINE}"
     echo -e ""
-    echo -e " ${aCOLOUR[2]}CasaOS Project  : https://github.com/IceWhaleTech/CasaOS"
-    echo -e " ${aCOLOUR[2]}CasaOS Team     : https://github.com/IceWhaleTech/CasaOS#maintainers"
-    echo -e " ${aCOLOUR[2]}CasaOS Discord  : https://discord.gg/knqAbbBbeX"
-    echo -e " ${aCOLOUR[2]}Website         : https://www.casaos.io"
-    echo -e " ${aCOLOUR[2]}Online Demo     : http://demo.casaos.io"
+    echo -e " ${aCOLOUR[2]}CassetteOS Project  : https://github.com/BeesNestInc/CassetteOS"
     echo -e ""
-    echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: casaos-uninstall"
+    echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: cassetteos-uninstall"
     echo -e "${COLOUR_RESET}"
 }
 
@@ -738,8 +734,8 @@ Check_Docker_Install
 # Step 7: Configuration Addon
 Configuration_Addons
 
-# Step 8: Download And Install CasaOS
-DownloadAndInstallCasaOS
+# Step 8: Download And Install CassetteOS
+DownloadAndInstallCassetteOS
 
 # Step 9: Check Service Status
 Check_Service_status
