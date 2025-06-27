@@ -218,7 +218,6 @@ CASA_SERVICES=(
 "cassetteos-user-service.service"
 "cassetteos-local-storage.service"
 "cassetteos-app-management.service"
-"rclone.service"
 "cassetteos.service"  # must be the last one so update from UI can work 
 )
 
@@ -460,43 +459,6 @@ Install_Docker() {
     fi
 }
 
-#Install Rclone
-Install_rclone_from_source() {
-  ${sudo_cmd} wget -qO ./install.sh https://rclone.org/install.sh
-  sed -i 's/downloads.rclone.org/get.casaos.io/g' ./install.sh
-  ${sudo_cmd} chmod +x ./install.sh
-  ${sudo_cmd} ./install.sh || {
-    Show 1 "Installation failed, please try again."
-    ${sudo_cmd} rm -rf install.sh
-    exit 1
-  }
-  ${sudo_cmd} rm -rf install.sh
-  Show 0 "Rclone v1.61.1 installed successfully."
-}
-
-Install_Rclone() {
-  Show 2 "Install the necessary dependencies: Rclone"
-  if [[ -x "$(command -v rclone)" ]]; then
-    version=$(rclone --version 2>>errors | head -n 1)
-    target_version="rclone v1.61.1"
-    rclone1="${PREFIX}/usr/share/man/man1/rclone.1.gz"
-    if [ "$version" != "$target_version" ]; then
-      Show 3 "Will change rclone from $version to $target_version."
-      rclone_path=$(command -v rclone)
-      ${sudo_cmd} rm -rf "${rclone_path}"
-      if [[ -f "$rclone1" ]]; then
-        ${sudo_cmd} rm -rf "$rclone1"
-      fi
-      Install_rclone_from_source
-    else
-      Show 2 "Target version already installed."
-    fi
-  else
-    Install_rclone_from_source
-  fi
-  ${sudo_cmd} systemctl enable rclone || Show 3 "Service rclone does not exist."
-}
-
 #Configuration Addons
 Configuration_Addons() {
     Show 2 "Configuration CassetteOS Addons"
@@ -612,8 +574,6 @@ DownloadAndInstallCassetteOS() {
 
     ${sudo_cmd} chmod +x $CASA_UNINSTALL_PATH
     
-    Install_Rclone
-
     for SERVICE in "${CASA_SERVICES[@]}"; do
         Show 2 "Starting ${SERVICE}..."
         GreyStart
