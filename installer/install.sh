@@ -450,11 +450,7 @@ Install_Docker() {
         ${sudo_cmd} mkdir -p "${PREFIX}/etc/apt/sources.list.d"
     fi
     GreyStart
-    if [[ "${REGION}" = "China" ]] || [[ "${REGION}" = "CN" ]]; then
-        ${sudo_cmd} curl -fsSL https://play.cuse.eu.org/get_docker.sh | bash -s docker --mirror Aliyun
-    else
-        ${sudo_cmd} curl -fsSL https://get.docker.com | bash
-    fi
+    ${sudo_cmd} curl -fsSL https://get.docker.com | bash
     ColorReset
     if [[ $? -ne 0 ]]; then
         Show 1 "Installation failed, please try again."
@@ -467,11 +463,7 @@ Install_Docker() {
 #Install Rclone
 Install_rclone_from_source() {
   ${sudo_cmd} wget -qO ./install.sh https://rclone.org/install.sh
-  if [[ "${REGION}" = "China" ]] || [[ "${REGION}" = "CN" ]]; then
-    sed -i 's/downloads.rclone.org/casaos.oss-cn-shanghai.aliyuncs.com/g' ./install.sh
-  else
-    sed -i 's/downloads.rclone.org/get.casaos.io/g' ./install.sh
-  fi
+  sed -i 's/downloads.rclone.org/get.casaos.io/g' ./install.sh
   ${sudo_cmd} chmod +x ./install.sh
   ${sudo_cmd} ./install.sh || {
     Show 1 "Installation failed, please try again."
