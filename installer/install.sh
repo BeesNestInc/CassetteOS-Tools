@@ -197,15 +197,16 @@ Check_Arch() {
     esac
     Show 0 "Your hardware architecture is : $UNAME_M"
     CASA_PACKAGES=(
-        "${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-cassetteos-gateway-v0.4.9-alpha4.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-cassetteos-message-bus-v0.4.4-3-alpha2.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-cassetteos-user-service-v0.4.8.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-cassetteos-local-storage-v0.4.4.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-cassetteos-app-management-v0.4.10-alpha2.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-cassetteos-v0.4.15.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-cassetteos-cli-v0.4.4-3-alpha1.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UI/releases/download/v0.4.20/linux-all-cassetteos-v0.4.20.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
+        "${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Gateway/releases/download/v0.4.15-alpha1-cs1.1.2/linux-${TARGET_ARCH}-cassetteos-gateway-v0.4.15-alpha1-cs1.1.2.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-MessageBus/releases/download/v0.4.7-alpha26-cs1.0.2/linux-${TARGET_ARCH}-cassetteos-message-bus-v0.4.7-alpha26-cs1.0.2.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UserService/releases/download/v0.4.8-cs1.0.0/linux-${TARGET_ARCH}-cassetteos-user-service-v0.4.8-cs1.0.0.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-LocalStorage/releases/download/v0.4.10-alpha1-cs1.0.3/linux-${TARGET_ARCH}-cassetteos-local-storage-v0.4.10-alpha1-cs1.0.3.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppManagement/releases/download/v0.4.16-alpha2-cs1.0.2/linux-${TARGET_ARCH}-cassetteos-app-management-v0.4.16-alpha2-cs1.0.2.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS/releases/download/v0.4.15-cs1.3.6/linux-${TARGET_ARCH}-cassetteos-v0.4.15-cs1.3.6.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-CLI/releases/download/v0.4.4-3-alpha1-cs1.0.0/linux-${TARGET_ARCH}-cassetteos-cli-v0.4.4-3-alpha1-cs1.0.0.tar.gz"
+"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UI/releases/download/v0.4.18-cs1.2.6/linux-all-cassetteos-v0.4.18-cs1.2.6.tar.gz"
+#"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
+
     )
 }
 
@@ -538,7 +539,7 @@ DownloadAndInstallCassetteOS() {
     ${sudo_cmd} touch "${MANIFEST_FILE}" || Show 1 "Failed to create manifest file"
 
     GreyStart
-    find "${SYSROOT_DIR}" -type f | ${sudo_cmd} cut -c ${#SYSROOT_DIR}- | ${sudo_cmd} cut -c 2- | ${sudo_cmd} tee "${MANIFEST_FILE}" >/dev/null || Show 1 "Failed to create manifest file"
+    find "${SYSROOT_DIR}" -type f | ${sudo_cmd} cut -c ${#SYSROOT_DIR}- | ${sudo_cmd} cut -c 2- | ${sudo_cmd} tee "${MANIFEST_FILE}" >/dev/null || Show 1 "Failed to create manifest file"#
 
     ${sudo_cmd} cp -rf "${SYSROOT_DIR}"/* / || Show 1 "Failed to install CassetteOS"
     ColorReset
@@ -557,24 +558,24 @@ DownloadAndInstallCassetteOS() {
         ${sudo_cmd} chmod +x $UI_EVENTS_REG_SCRIPT
     fi
     
-    #Download Uninstall Script
+    # Download Uninstall Script
     if [[ -f $PREFIX/tmp/cassetteos-uninstall ]]; then
         ${sudo_cmd} rm -rf "$PREFIX/tmp/cassetteos-uninstall"
     fi
-    ${sudo_cmd} curl -fsSLk "$CASA_UNINSTALL_URL" >"$PREFIX/tmp/cassetteos-uninstall"
-    ${sudo_cmd} cp -rf "$PREFIX/tmp/cassetteos-uninstall" $CASA_UNINSTALL_PATH || {
-        Show 1 "Download uninstall script failed, Please check if your internet connection is working and retry."
-        exit 1
-    }
+   # ${sudo_cmd} curl -fsSLk "$CASA_UNINSTALL_URL" >"$PREFIX/tmp/cassetteos-uninstall"
+   # ${sudo_cmd} cp -rf "$PREFIX/tmp/cassetteos-uninstall" $CASA_UNINSTALL_PATH || {
+       # Show 1 "Download uninstall script failed, Please check if your internet connection is working and retry."
+       # exit 1
+   # }#
 
-    ${sudo_cmd} chmod +x $CASA_UNINSTALL_PATH
+   # ${sudo_cmd} chmod +x $CASA_UNINSTALL_PATH#
     
     for SERVICE in "${CASA_SERVICES[@]}"; do
-        Show 2 "Starting ${SERVICE}..."
-        GreyStart
-        ${sudo_cmd} systemctl start "${SERVICE}" || Show 3 "Service ${SERVICE} does not exist."
-        ColorReset
-    done
+       Show 2 "Starting ${SERVICE}..."
+       GreyStart
+       ${sudo_cmd} systemctl start "${SERVICE}" || Show 3 "Service ${SERVICE} does not exist."
+       ColorReset
+   done
 }
 
 Clean_Temp_Files() {
@@ -638,7 +639,7 @@ usage() {
                 Valid options are:
                     -p <build_dir>          Specify build directory (Local install)
                     -h                      Show this help message and exit
-        EOF
+EOF
     exit "$1"
 }
 
@@ -670,6 +671,7 @@ Check_Memory
 Check_Disk
 
 # Step 5: Install Depends
+
 Update_Package_Resource
 Install_Depends
 Check_Dependency_Installation
@@ -679,7 +681,7 @@ Check_Docker_Install
 
 
 # Step 7: Configuration Addon
-Configuration_Addons
+Configuration_Addonsq
 
 # Step 8: Download And Install CassetteOS
 DownloadAndInstallCassetteOS
