@@ -557,9 +557,6 @@ DownloadAndInstallCassetteOS() {
         ${sudo_cmd} chmod +x $UI_EVENTS_REG_SCRIPT
     fi
     
-    # Modify app store configuration
-    sed -i "s#https://github.com/IceWhaleTech/_appstore/#${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/_appstore/#g" "$PREFIX/etc/casaos/app-management.conf"
-
     #Download Uninstall Script
     if [[ -f $PREFIX/tmp/cassetteos-uninstall ]]; then
         ${sudo_cmd} rm -rf "$PREFIX/tmp/cassetteos-uninstall"
