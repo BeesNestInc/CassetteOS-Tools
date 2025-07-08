@@ -47,8 +47,33 @@ source /etc/os-release
 readonly MINIMUM_DISK_SIZE_GB="5"
 readonly MINIMUM_MEMORY="400"
 readonly MINIMUM_DOCKER_VERSION="20"
-readonly CASA_DEPANDS_PACKAGE=('wget' 'curl' 'smartmontools' 'parted' 'ntfs-3g' 'net-tools' 'udevil' 'samba' 'cifs-utils' 'mergerfs' 'unzip')
-readonly CASA_DEPANDS_COMMAND=('wget' 'curl' 'smartctl' 'parted' 'ntfs-3g' 'netstat' 'udevil' 'smbd' 'mount.cifs' 'mount.mergerfs' 'unzip')
+# 🛠️ 本体インストール用
+readonly CASA_DEPENDS_LIST=(
+  "wget:wget"
+  "curl:curl"
+  "smartctl:smartmontools"
+  "parted:parted"
+  "ntfs-3g:ntfs-3g"
+  "netstat:net-tools"
+  "udevil:udevil"
+  "smbd:samba"
+  "mount.cifs:cifs-utils"
+  "mount.mergerfs:mergerfs"
+  "unzip:unzip"
+)
+
+# 📡 WiFiセットアップ用
+readonly WIFI_SETUP_DEPENDS_LIST=(
+  "avahi-daemon:avahi-daemon"
+  "hostapd:hostapd"
+  "dnsmasq:dnsmasq"
+  "iw":"iw"
+)
+
+# 🗃️ ホストDB用
+readonly HOST_DB_DEPENDS_LIST=(
+  "psql:postgresql"
+)
 
 # SYSTEM INFO
 PHYSICAL_MEMORY=$(LC_ALL=C free -m | awk '/Mem:/ { print $2 }')
@@ -351,42 +376,43 @@ Update_Package_Resource() {
     Show 0 "Update package manager complete."
 }
 
-# Install depends package
 Install_Depends() {
-    for ((i = 0; i < ${#CASA_DEPANDS_COMMAND[@]}; i++)); do
-        cmd=${CASA_DEPANDS_COMMAND[i]}
-        if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
-            packagesNeeded=${CASA_DEPANDS_PACKAGE[i]}
-            Show 2 "Install the necessary dependencies: \e[33m$packagesNeeded \e[0m"
+    local dep_list=("$@")
+
+    for pair in "${dep_list[@]}"; do
+        IFS=':' read -r cmd pkg <<< "$pair"
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            Show 2 "Installing missing dependency: \e[33m$pkg\e[0m (for $cmd)"
             GreyStart
             if [ -x "$(command -v apk)" ]; then
-                ${sudo_cmd} apk add --no-cache "$packagesNeeded"
+                ${sudo_cmd} apk add --no-cache "$pkg"
             elif [ -x "$(command -v apt-get)" ]; then
-                ${sudo_cmd} apt-get -y -qq install "$packagesNeeded" --no-upgrade
+                ${sudo_cmd} apt-get -y -qq install "$pkg" --no-upgrade
             elif [ -x "$(command -v dnf)" ]; then
-                ${sudo_cmd} dnf install "$packagesNeeded"
+                ${sudo_cmd} dnf install -y "$pkg"
             elif [ -x "$(command -v zypper)" ]; then
-                ${sudo_cmd} zypper install "$packagesNeeded"
+                ${sudo_cmd} zypper install -y "$pkg"
             elif [ -x "$(command -v yum)" ]; then
-                ${sudo_cmd} yum install -y "$packagesNeeded"
+                ${sudo_cmd} yum install -y "$pkg"
             elif [ -x "$(command -v pacman)" ]; then
-                ${sudo_cmd} pacman -S "$packagesNeeded"
+                ${sudo_cmd} pacman -S --noconfirm "$pkg"
             elif [ -x "$(command -v paru)" ]; then
-                ${sudo_cmd} paru -S "$packagesNeeded"
+                ${sudo_cmd} paru -S --noconfirm "$pkg"
             else
-                Show 1 "Package manager not found. You must manually install: \e[33m$packagesNeeded \e[0m"
+                Show 1 "Package manager not found. You must manually install: \e[33m$pkg\e[0m"
             fi
             ColorReset
         fi
     done
 }
 
-Check_Dependency_Installation() {
-    for ((i = 0; i < ${#CASA_DEPANDS_COMMAND[@]}; i++)); do
-        cmd=${CASA_DEPANDS_COMMAND[i]}
-        if [[ ! -x $(${sudo_cmd} which "$cmd") ]]; then
-            packagesNeeded=${CASA_DEPANDS_PACKAGE[i]}
-            Show 1 "Dependency \e[33m$packagesNeeded \e[0m installation failed, please try again manually!"
+Check_Depends_Installed() {
+    local dep_list=("$@")
+
+    for pair in "${dep_list[@]}"; do
+        IFS=':' read -r cmd pkg <<< "$pair"
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            Show 1 "Dependency \e[33m$pkg\e[0m (command: $cmd) is still missing after installation. Please check manually."
             exit 1
         fi
     done
@@ -628,6 +654,194 @@ Welcome_Banner() {
     echo -e "${COLOUR_RESET}"
 }
 
+Configure_PgHba() {
+    local PG_HBA
+    PG_HBA=$(sudo -u postgres psql -t -P format=unaligned -c 'SHOW hba_file;' 2>/dev/null)
+
+    if [ -z "$PG_HBA" ] || [ ! -f "$PG_HBA" ]; then
+        Show 1 "pg_hba.conf not found via PostgreSQL. Is it installed and initialized?"
+        return 1
+    fi
+
+    Show 2 "Creating backup of pg_hba.conf..."
+    ${sudo_cmd} cp "$PG_HBA" "${PG_HBA}.bak"
+
+    local RULES="
+# Added by CassetteOS installer
+host    all             db_admin_user   172.30.0.0/16            trust
+host    all             all             172.30.0.0/16           md5
+"
+    if ! grep -q "172.30.0.0/16" "$PG_HBA"; then
+        Show 2 "Appending Docker access rules to pg_hba.conf..."
+        echo "$RULES" | ${sudo_Gcmd} tee -a "$PG_HBA" >/dev/null
+    else
+        Show 2 "Docker access rules already exist in pg_hba.conf. Skipping."
+    fi
+}
+Configure_Postgres_ListenAddresses() {
+    local PG_CONF
+    PG_CONF=$(sudo -u postgres psql -t -P format=unaligned -c 'SHOW config_file;' 2>/dev/null)
+
+    if [ -z "$PG_CONF" ] || [ ! -f "$PG_CONF" ]; then
+        Show 1 "postgresql.conf not found. Is PostgreSQL installed and initialized?"
+        return 1
+    fi
+
+    Show 2 "Creating backup of postgresql.conf..."
+    ${sudo_cmd} cp "$PG_CONF" "${PG_CONF}.bak"
+
+    if grep -qE '^\s*listen_addresses\s*=' "$PG_CONF"; then
+        Show 2 "Commenting out existing active listen_addresses line..."
+        ${sudo_cmd} sed -i.bak '/^\s*listen_addresses\s*=/{s/^/#/}' "$PG_CONF"
+    else
+        Show 2 "No active listen_addresses line found, skipping comment-out."
+    fi
+
+    Show 2 "Appending listen_addresses='*' to postgresql.conf..."
+    echo "listen_addresses='*'" | ${sudo_cmd} tee -a "$PG_CONF" >/dev/null
+}
+Install_DbAdmin_StoredProcedure() {
+    local SCRIPT_URL="https://api.cassetteos.com/scripts/db_setup.sql"
+    local SCRIPT_PATH="/tmp/db_setup.sql"
+
+    Show 2 "Downloading db_admin_user setup script from: $SCRIPT_URL"
+    if ! curl -fsSL "$SCRIPT_URL" -o "$SCRIPT_PATH"; then
+        Show 1 "Failed to download DB setup script!"
+        return 1
+    fi
+
+    Show 2 "Executing DB setup script..."
+    if ! sudo -u postgres psql -f "$SCRIPT_PATH"; then
+        Show 1 "Failed to execute DB setup script!"
+        return 1
+    fi
+
+    Show 2 "DB admin setup script completed successfully!"
+}
+Restart_Postgres_Service() {
+    Show 2 "Reloading PostgreSQL service..."
+    if ${sudo_cmd} systemctl reload postgresql 2>/dev/null; then
+        Show 2 "PostgreSQL reloaded successfully!"
+    else
+        Show 2 "Reload failed, trying full restart..."
+        ${sudo_cmd} systemctl restart postgresql
+        Show 2 "PostgreSQL restarted."
+    fi
+}
+
+Configure_host_database(){
+    echo "🔧 Setting up connection to host database..."
+    Install_Depends "${HOST_DB_DEPENDS_LIST[@]}"
+    Check_Depends_Installed "${HOST_DB_DEPENDS_LIST[@]}"
+
+    # configure postgres
+    Configure_PgHba #pending md5 for db_admin_user
+    Configure_Postgres_ListenAddresses
+
+    # pending: create password and save /etc/cassettesos/env
+    # pending: append password to download script
+
+    # install create_user 
+    Install_DbAdmin_StoredProcedure
+
+    # service stop and start
+    Restart_Postgres_Service
+}
+Create_Hostapd_Config(){
+    local HOSTAPD_CONF="/etc/hostapd/hostapd.conf"
+
+    echo "🔧 Creating hostapd.conf..."
+
+
+    [ -f "$HOSTAPD_CONF" ] && sudo cp "$HOSTAPD_CONF" "$HOSTAPD_CONF.bak.$(date +%s)"
+    
+    # interface取得
+    local INTERFACE=$(sudo iw dev | awk '$1=="Interface"{print $2}')
+    if [[ -z "$INTERFACE" ]]; then
+        echo "❌ No wireless interface found. Aborting."
+        return 1
+    fi
+
+    # SSIDとパスワードを取得
+    read -p "📶 Enter SSID for AP [default: Setup-WiFi]: " SSID
+    SSID=${SSID:-Setup-WiFi}
+
+    read -s -p "🔑 Enter WPA passphrase [default: SetupMe1234]: " PASSPHRASE
+    echo ""
+    PASSPHRASE=${PASSPHRASE:-SetupMe1234}
+
+    # 設定ファイル生成
+    sudo tee "$HOSTAPD_CONF" > /dev/null <<EOF
+interface=$INTERFACE
+ssid=$SSID
+hw_mode=g
+channel=6
+auth_algs=1
+wpa=2
+wpa_passphrase=$PASSPHRASE
+wpa_key_mgmt=WPA-PSK
+rsn_pairwise=CCMP
+EOF
+
+    echo "✅ Created $HOSTAPD_CONF"
+}
+Create_Dnsmasq_Config(){
+    local DNSMASQ_CONF="/etc/dnsmasq.conf"
+
+    echo "🛠 Creating dnsmasq.conf..."
+
+    [ -f "$DNSMASQ_CONF" ] && sudo cp "$DNSMASQ_CONF" "$DNSMASQ_CONF.bak.$(date +%s)"
+
+    local INTERFACE=$(sudo iw dev | awk '$1=="Interface"{print $2}')
+    if [[ -z "$INTERFACE" ]]; then
+        echo "❌ No wireless interface found. Aborting."
+        return 1
+    fi
+
+    sudo tee "$DNSMASQ_CONF" > /dev/null <<EOF
+interface=$INTERFACE
+bind-interfaces
+dhcp-range=192.168.4.100,192.168.4.200,12h
+dhcp-option=3,192.168.4.1
+dhcp-option=6,192.168.4.1
+server=8.8.8.8
+server=1.1.1.1
+log-queries
+log-dhcp
+EOF
+
+    echo "✅ Created $DNSMASQ_CONF"
+}
+
+
+Configure_wifi_access(){
+    echo "📡 Setting up WiFi access configuration..."
+    Install_Depends "${WIFI_SETUP_DEPENDS_LIST[@]}"
+    Check_Depends_Installed "${WIFI_SETUP_DEPENDS_LIST[@]}"
+
+    sudo systemctl unmask hostapd
+
+    ENV_FILE="/etc/cassetteos/env"
+    if ! grep -q "^AP_IP_ADDRESS=" "$ENV_FILE"; then
+        echo "AP_IP_ADDRESS=192.168.4.1" | sudo tee -a "$ENV_FILE" > /dev/null
+        echo "✅ AP_IP_ADDRESS written to $ENV_FILE"
+    else
+        echo "ℹ️  $ENV_FILE already contains AP_IP_ADDRESS"
+    fi
+
+    Create_Hostapd_Config
+    Create_Dnsmasq_Config
+
+    echo "Do you want to switch to AP mode now? [y/N]"
+    read -r answer
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        echo "🔁 Switching to AP mode..."
+        sudo bash /usr/share/cassetteos/shell/switch-wifi-mode.sh ap
+    else
+        echo "⏩ Skipping AP mode switch."
+    fi
+
+}
 ###############################################################################
 # Main                                                                        #
 ###############################################################################
@@ -638,15 +852,26 @@ usage() {
                 Usage: install.sh [options]
                 Valid options are:
                     -p <build_dir>          Specify build directory (Local install)
+                    -H                      Use host database instead of Docker DB
+                    -W                      Enable WiFi setup feature
                     -h                      Show this help message and exit
 EOF
     exit "$1"
 }
 
-while getopts ":p:h" arg; do
+USE_HOST_DB=false
+ENABLE_WIFI_SETUP=false
+
+while getopts ":p:HWh" arg; do
     case "$arg" in
     p)
         BUILD_DIR=$OPTARG
+        ;;
+    H)
+        USE_HOST_DB=true
+        ;;
+    W)
+        ENABLE_WIFI_SETUP=true
         ;;
     h)
         usage 0
@@ -673,18 +898,26 @@ Check_Disk
 # Step 5: Install Depends
 
 Update_Package_Resource
-Install_Depends
-Check_Dependency_Installation
+Install_Depends "${CASA_DEPENDS_LIST[@]}"
+Check_Depends_Installed "${CASA_DEPENDS_LIST[@]}"
 
 # Step 6: Check And Install Docker
 Check_Docker_Install
 
 
 # Step 7: Configuration Addon
-Configuration_Addonsq
+Configuration_Addons
 
 # Step 8: Download And Install CassetteOS
 DownloadAndInstallCassetteOS
+
+if [ "$USE_HOST_DB" = true ]; then
+    Configure_host_database
+fi
+
+if [ "$ENABLE_WIFI_SETUP" = true ]; then
+    Configure_wifi_access
+fi
 
 # Step 9: Check Service Status
 Check_Service_status
