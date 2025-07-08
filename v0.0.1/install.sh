@@ -7,9 +7,9 @@
 #   This script installs CassetteOS to your system.
 #   Usage:
 #
-#       $ wget -qO- https://api.cassetteos.com/scripts/v0.0.1/install.sh | bash
+#       $ wget -qO- https://api.cassetteos.com/scripts/v0.0.1/install.sh | sudo bash
 #         or
-#       $ curl -fsSL https://api.cassetteos.com/scripts/v0.0.1/install.sh | bash
+#       $ curl -fsSL https://api.cassetteos.com/scripts/v0.0.1/install.sh | sudo bash
 #
 #   In automated environments, you may want to run as root.
 #   If using curl, we recommend using the -fsSL flags.
