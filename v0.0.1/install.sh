@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 #
-#           CassetteOS Installer Script v0.4.15#
+#           CassetteOS Installer Script v0.0.1
 #   GitHub: https://github.com/BeesNestInc/CassetteOS
 #   Requires: bash, mv, rm, tr, grep, sed, curl/wget, tar, smartmontools, parted, ntfs-3g, net-tools
 #
