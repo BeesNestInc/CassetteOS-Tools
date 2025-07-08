@@ -48,7 +48,7 @@ readonly MINIMUM_DISK_SIZE_GB="5"
 readonly MINIMUM_MEMORY="400"
 readonly MINIMUM_DOCKER_VERSION="20"
 # 🛠️ 本体インストール用
-readonly CASA_DEPENDS_LIST=(
+readonly CASSETTE_DEPENDS_LIST=(
   "wget:wget"
   "curl:curl"
   "smartctl:smartmontools"
@@ -96,9 +96,9 @@ readonly UNAME_M
 UNAME_U="$(uname -s)"
 readonly UNAME_U
 
-readonly CASA_CONF_PATH=/etc/cassetteos/gateway.ini
-readonly CASA_UNINSTALL_URL="https://api.cassetteos.com/v0.0.1/uninstall.sh"
-readonly CASA_UNINSTALL_PATH=/usr/bin/cassetteos-uninstall
+readonly CASSETTE_CONF_PATH=/etc/cassetteos/gateway.ini
+readonly CASSETTE_UNINSTALL_URL="https://api.cassetteos.com/scripts/v0.0.1/uninstall.sh"
+readonly CASSETTE_UNINSTALL_PATH=/usr/bin/cassetteos-uninstall
 
 # REQUIREMENTS CONF PATH
 # Udevil
@@ -119,11 +119,11 @@ readonly GREEN_LINE=" ${aCOLOUR[0]}───────────────
 readonly GREEN_BULLET=" ${aCOLOUR[0]}-$COLOUR_RESET"
 readonly GREEN_SEPARATOR="${aCOLOUR[0]}:$COLOUR_RESET"
 
-# CASAOS VARIABLES
+# CASSETTEOS VARIABLES
 TARGET_ARCH=""
 TMP_ROOT=/tmp/cassetteos-installer
 REGION="UNKNOWN"
-CASA_DOWNLOAD_DOMAIN="https://github.com/"
+CASSETTE_DOWNLOAD_DOMAIN="https://github.com/"
 
 trap 'onCtrlC' INT
 onCtrlC() {
@@ -221,22 +221,22 @@ Check_Arch() {
         ;;
     esac
     Show 0 "Your hardware architecture is : $UNAME_M"
-    CASA_PACKAGES=(
-        "${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Gateway/releases/download/v0.4.15-alpha1-cs1.1.2/linux-${TARGET_ARCH}-cassetteos-gateway-v0.4.15-alpha1-cs1.1.2.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-MessageBus/releases/download/v0.4.7-alpha26-cs1.0.2/linux-${TARGET_ARCH}-cassetteos-message-bus-v0.4.7-alpha26-cs1.0.2.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UserService/releases/download/v0.4.8-cs1.0.0/linux-${TARGET_ARCH}-cassetteos-user-service-v0.4.8-cs1.0.0.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-LocalStorage/releases/download/v0.4.10-alpha1-cs1.0.3/linux-${TARGET_ARCH}-cassetteos-local-storage-v0.4.10-alpha1-cs1.0.3.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppManagement/releases/download/v0.4.16-alpha2-cs1.0.2/linux-${TARGET_ARCH}-cassetteos-app-management-v0.4.16-alpha2-cs1.0.2.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS/releases/download/v0.4.15-cs1.3.6/linux-${TARGET_ARCH}-cassetteos-v0.4.15-cs1.3.6.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-CLI/releases/download/v0.4.4-3-alpha1-cs1.0.0/linux-${TARGET_ARCH}-cassetteos-cli-v0.4.4-3-alpha1-cs1.0.0.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UI/releases/download/v0.4.18-cs1.2.6/linux-all-cassetteos-v0.4.18-cs1.2.6.tar.gz"
-#"${CASA_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
+    CASSETTE_PACKAGES=(
+        "${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Gateway/releases/download/v0.4.15-alpha1-cs1.1.2/linux-${TARGET_ARCH}-cassetteos-gateway-v0.4.15-alpha1-cs1.1.2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-MessageBus/releases/download/v0.4.7-alpha26-cs1.0.2/linux-${TARGET_ARCH}-cassetteos-message-bus-v0.4.7-alpha26-cs1.0.2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UserService/releases/download/v0.4.8-cs1.0.0/linux-${TARGET_ARCH}-cassetteos-user-service-v0.4.8-cs1.0.0.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-LocalStorage/releases/download/v0.4.10-alpha1-cs1.0.3/linux-${TARGET_ARCH}-cassetteos-local-storage-v0.4.10-alpha1-cs1.0.3.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppManagement/releases/download/v0.4.16-alpha2-cs1.0.2/linux-${TARGET_ARCH}-cassetteos-app-management-v0.4.16-alpha2-cs1.0.2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS/releases/download/v0.4.15-cs1.3.6/linux-${TARGET_ARCH}-cassetteos-v0.4.15-cs1.3.6.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-CLI/releases/download/v0.4.4-3-alpha1-cs1.0.0/linux-${TARGET_ARCH}-cassetteos-cli-v0.4.4-3-alpha1-cs1.0.0.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UI/releases/download/v0.4.18-cs1.2.6/linux-all-cassetteos-v0.4.18-cs1.2.6.tar.gz"
+#"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
 
     )
 }
 
-# PACKAGE LIST OF CASAOS (make sure the services are in the right order)
-CASA_SERVICES=(
+# PACKAGE LIST OF CASSETTEOS (make sure the services are in the right order)
+CASSETTE_SERVICES=(
     "cassetteos-gateway.service"
 "cassetteos-message-bus.service"
 "cassetteos-user-service.service"
@@ -343,7 +343,7 @@ Check_Port() {
 
 # Get an available port
 Get_Port() {
-    CurrentPort=$(${sudo_cmd} cat ${CASA_CONF_PATH} | grep HttpPort | awk '{print $3}')
+    CurrentPort=$(${sudo_cmd} cat ${CASSETTE_CONF_PATH} | grep HttpPort | awk '{print $3}')
     if [[ $CurrentPort == "$Port" ]]; then
         for PORT in {80..65536}; do
             if [[ $(Check_Port "$PORT") == 0 ]]; then
@@ -529,7 +529,7 @@ DownloadAndInstallCassetteOS() {
 
         pushd "${TMP_DIR}"
 
-        for PACKAGE in "${CASA_PACKAGES[@]}"; do
+        for PACKAGE in "${CASSETTE_PACKAGES[@]}"; do
             Show 2 "Downloading ${PACKAGE}..."
             GreyStart
             ${sudo_cmd} wget -t 3 -q --show-progress -c  "${PACKAGE}" || Show 1 "Failed to download package"
@@ -548,7 +548,7 @@ DownloadAndInstallCassetteOS() {
         popd
     fi
 
-    for SERVICE in "${CASA_SERVICES[@]}"; do
+    for SERVICE in "${CASSETTE_SERVICES[@]}"; do
         if ${sudo_cmd} systemctl --quiet is-active "${SERVICE}"; then
             Show 2 "Stopping ${SERVICE}..."
             GreyStart
@@ -588,15 +588,15 @@ DownloadAndInstallCassetteOS() {
     if [[ -f $PREFIX/tmp/cassetteos-uninstall ]]; then
         ${sudo_cmd} rm -rf "$PREFIX/tmp/cassetteos-uninstall"
     fi
-    ${sudo_cmd} curl -fsSLk "$CASA_UNINSTALL_URL" >"$PREFIX/tmp/cassetteos-uninstall"
-    ${sudo_cmd} cp -rf "$PREFIX/tmp/cassetteos-uninstall" $CASA_UNINSTALL_PATH || {
+    ${sudo_cmd} curl -fsSLk "$CASSETTE_UNINSTALL_URL" >"$PREFIX/tmp/cassetteos-uninstall"
+    ${sudo_cmd} cp -rf "$PREFIX/tmp/cassetteos-uninstall" $CASSETTE_UNINSTALL_PATH || {
        Show 1 "Download uninstall script failed, Please check if your internet connection is working and retry."
        exit 1
     }
 
-    ${sudo_cmd} chmod +x $CASA_UNINSTALL_PATH#
+    ${sudo_cmd} chmod +x $CASSETTE_UNINSTALL_PATH
     
-    for SERVICE in "${CASA_SERVICES[@]}"; do
+    for SERVICE in "${CASSETTE_SERVICES[@]}"; do
        Show 2 "Starting ${SERVICE}..."
        GreyStart
        ${sudo_cmd} systemctl start "${SERVICE}" || Show 3 "Service ${SERVICE} does not exist."
@@ -610,7 +610,7 @@ Clean_Temp_Files() {
 }
 
 Check_Service_status() {
-    for SERVICE in "${CASA_SERVICES[@]}"; do
+    for SERVICE in "${CASSETTE_SERVICES[@]}"; do
         Show 2 "Checking ${SERVICE}..."
         if [[ $(${sudo_cmd} systemctl is-active "${SERVICE}") == "active" ]]; then
             Show 0 "${SERVICE} is running."
@@ -623,7 +623,7 @@ Check_Service_status() {
 
 # Get the physical NIC IP
 Get_IPs() {
-    PORT=$(${sudo_cmd} cat ${CASA_CONF_PATH} | grep port | sed 's/port=//')
+    PORT=$(${sudo_cmd} cat ${CASSETTE_CONF_PATH} | grep port | sed 's/port=//')
     ALL_NIC=$($sudo_cmd ls /sys/class/net/ | grep -v "$(ls /sys/devices/virtual/net/)")
     for NIC in ${ALL_NIC}; do
         IP=$($sudo_cmd ifconfig "${NIC}" | grep inet | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}' | sed -e 's/addr://g')
@@ -639,10 +639,10 @@ Get_IPs() {
 
 # Show Welcome Banner
 Welcome_Banner() {
-    CASA_TAG=$(cassetteos -v)
+    CASSETTE_TAG=$(cassetteos -v)
 
     echo -e "${GREEN_LINE}${aCOLOUR[1]}"
-    echo -e " CassetteOS ${CASA_TAG}${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
+    echo -e " CassetteOS ${CASSETTE_TAG}${COLOUR_RESET} is running at${COLOUR_RESET}${GREEN_SEPARATOR}"
     echo -e "${GREEN_LINE}"
     Get_IPs
     echo -e " Open your browser and visit the above address."
@@ -701,7 +701,7 @@ Configure_Postgres_ListenAddresses() {
     echo "listen_addresses='*'" | ${sudo_cmd} tee -a "$PG_CONF" >/dev/null
 }
 Install_DbAdmin_StoredProcedure() {
-    local SCRIPT_URL="https://api.cassetteos.com/v0.0.1/db_setup.sql"
+    local SCRIPT_URL="https://api.cassetteos.com/scripts/v0.0.1/db_setup.sql"
     local SCRIPT_PATH="/tmp/db_setup.sql"
 
     Show 2 "Downloading db_admin_user setup script from: $SCRIPT_URL"
@@ -822,8 +822,9 @@ Configure_wifi_access(){
     sudo systemctl unmask hostapd
 
     ENV_FILE="/etc/cassetteos/env"
+
     if ! grep -q "^AP_IP_ADDRESS=" "$ENV_FILE"; then
-        echo "AP_IP_ADDRESS=192.168.4.1" | sudo tee -a "$ENV_FILE" > /dev/null
+        echo -e "\nAP_IP_ADDRESS=192.168.4.1" | sudo tee -a "$ENV_FILE" > /dev/null
         echo "✅ AP_IP_ADDRESS written to $ENV_FILE"
     else
         echo "ℹ️  $ENV_FILE already contains AP_IP_ADDRESS"
@@ -898,8 +899,8 @@ Check_Disk
 # Step 5: Install Depends
 
 Update_Package_Resource
-Install_Depends "${CASA_DEPENDS_LIST[@]}"
-Check_Depends_Installed "${CASA_DEPENDS_LIST[@]}"
+Install_Depends "${CASSETTE_DEPENDS_LIST[@]}"
+Check_Depends_Installed "${CASSETTE_DEPENDS_LIST[@]}"
 
 # Step 6: Check And Install Docker
 Check_Docker_Install
