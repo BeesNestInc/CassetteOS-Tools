@@ -97,7 +97,7 @@ UNAME_U="$(uname -s)"
 readonly UNAME_U
 
 readonly CASA_CONF_PATH=/etc/cassetteos/gateway.ini
-readonly CASA_UNINSTALL_URL="https://get.casaos.io/uninstall/v0.4.15"
+readonly CASA_UNINSTALL_URL="https://api.cassetteos.com/v0.0.1/uninstall.sh"
 readonly CASA_UNINSTALL_PATH=/usr/bin/cassetteos-uninstall
 
 # REQUIREMENTS CONF PATH
@@ -588,13 +588,13 @@ DownloadAndInstallCassetteOS() {
     if [[ -f $PREFIX/tmp/cassetteos-uninstall ]]; then
         ${sudo_cmd} rm -rf "$PREFIX/tmp/cassetteos-uninstall"
     fi
-   # ${sudo_cmd} curl -fsSLk "$CASA_UNINSTALL_URL" >"$PREFIX/tmp/cassetteos-uninstall"
-   # ${sudo_cmd} cp -rf "$PREFIX/tmp/cassetteos-uninstall" $CASA_UNINSTALL_PATH || {
-       # Show 1 "Download uninstall script failed, Please check if your internet connection is working and retry."
-       # exit 1
-   # }#
+    ${sudo_cmd} curl -fsSLk "$CASA_UNINSTALL_URL" >"$PREFIX/tmp/cassetteos-uninstall"
+    ${sudo_cmd} cp -rf "$PREFIX/tmp/cassetteos-uninstall" $CASA_UNINSTALL_PATH || {
+       Show 1 "Download uninstall script failed, Please check if your internet connection is working and retry."
+       exit 1
+    }
 
-   # ${sudo_cmd} chmod +x $CASA_UNINSTALL_PATH#
+    ${sudo_cmd} chmod +x $CASA_UNINSTALL_PATH#
     
     for SERVICE in "${CASA_SERVICES[@]}"; do
        Show 2 "Starting ${SERVICE}..."
@@ -701,7 +701,7 @@ Configure_Postgres_ListenAddresses() {
     echo "listen_addresses='*'" | ${sudo_cmd} tee -a "$PG_CONF" >/dev/null
 }
 Install_DbAdmin_StoredProcedure() {
-    local SCRIPT_URL="https://api.cassetteos.com/scripts/db_setup.sql"
+    local SCRIPT_URL="https://api.cassetteos.com/v0.0.1/db_setup.sql"
     local SCRIPT_PATH="/tmp/db_setup.sql"
 
     Show 2 "Downloading db_admin_user setup script from: $SCRIPT_URL"
