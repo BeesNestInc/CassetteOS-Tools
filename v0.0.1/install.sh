@@ -124,6 +124,7 @@ TARGET_ARCH=""
 TMP_ROOT=/tmp/cassetteos-installer
 REGION="UNKNOWN"
 CASSETTE_DOWNLOAD_DOMAIN="https://github.com/"
+CASSETTEOS_VERSION="v0.0.2"
 
 trap 'onCtrlC' INT
 onCtrlC() {
@@ -222,14 +223,14 @@ Check_Arch() {
     esac
     Show 0 "Your hardware architecture is : $UNAME_M"
     CASSETTE_PACKAGES=(
-        "${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Gateway/releases/download/v0.4.15-alpha1-cs1.1.2/linux-${TARGET_ARCH}-cassetteos-gateway-v0.4.15-alpha1-cs1.1.2.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-MessageBus/releases/download/v0.4.7-alpha26-cs1.0.2/linux-${TARGET_ARCH}-cassetteos-message-bus-v0.4.7-alpha26-cs1.0.2.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UserService/releases/download/v0.4.8-cs1.0.0/linux-${TARGET_ARCH}-cassetteos-user-service-v0.4.8-cs1.0.0.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-LocalStorage/releases/download/v0.4.10-alpha1-cs1.0.3/linux-${TARGET_ARCH}-cassetteos-local-storage-v0.4.10-alpha1-cs1.0.3.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppManagement/releases/download/v0.4.16-alpha2-cs1.0.2/linux-${TARGET_ARCH}-cassetteos-app-management-v0.4.16-alpha2-cs1.0.2.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS/releases/download/v0.4.15-cs1.3.6/linux-${TARGET_ARCH}-cassetteos-v0.4.15-cs1.3.6.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-CLI/releases/download/v0.4.4-3-alpha1-cs1.0.0/linux-${TARGET_ARCH}-cassetteos-cli-v0.4.4-3-alpha1-cs1.0.0.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UI/releases/download/v0.4.18-cs1.2.6/linux-all-cassetteos-v0.4.18-cs1.2.6.tar.gz"
+        "${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Gateway/releases/download/${CASSETTEOS_VERSION}/linux-${TARGET_ARCH}-cassetteos-gateway-${CASSETTEOS_VERSION}.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-MessageBus/releases/download/${CASSETTEOS_VERSION}/linux-${TARGET_ARCH}-cassetteos-message-bus-${CASSETTEOS_VERSION}.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UserService/releases/download/${CASSETTEOS_VERSION}/linux-${TARGET_ARCH}-cassetteos-user-service-${CASSETTEOS_VERSION}.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-LocalStorage/releases/download/${CASSETTEOS_VERSION}/linux-${TARGET_ARCH}-cassetteos-local-storage-${CASSETTEOS_VERSION}.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppManagement/releases/download/${CASSETTEOS_VERSION}/linux-${TARGET_ARCH}-cassetteos-app-management-${CASSETTEOS_VERSION}.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS/releases/download/${CASSETTEOS_VERSION}/linux-${TARGET_ARCH}-cassetteos-${CASSETTEOS_VERSION}.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-CLI/releases/download/${CASSETTEOS_VERSION}/linux-${TARGET_ARCH}-cassetteos-cli-${CASSETTEOS_VERSION}.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UI/releases/download/${CASSETTEOS_VERSION}/linux-all-cassetteos-${CASSETTEOS_VERSION}.tar.gz"
 #"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
 
     )
