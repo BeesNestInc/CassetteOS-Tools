@@ -7,9 +7,9 @@
 #   This script update your CassetteOS.
 #   Usage:
 #
-#       $ wget -qO- https://api.cassetteos.com/scripts/v0.0.1/update.sh | sudo bash
+#       $ wget -qO- https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.1/update.sh | sudo bash
 #         or
-#       $ curl -fsSL https://api.cassetteos.com/scripts/v0.0.1/update.sh | sudo bash
+#       $ curl -fsSL https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.1/update.sh | sudo bash
 #
 #   In automated environments, you may want to run as root.
 #   If using curl, we recommend using the -fsSL flags.
@@ -62,7 +62,7 @@ readonly LSB_DIST
 UNAME_M="$(uname -m)"
 readonly UNAME_M
 
-readonly CASSETTE_UNINSTALL_URL="https://api.cassetteos.com/scripts/v0.0.1/uninstall.sh"
+readonly CASSETTE_UNINSTALL_URL="https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.1/uninstall.sh"
 readonly CASSETTE_UNINSTALL_PATH=/usr/bin/cassetteos-uninstall
 
 # REQUIREMENTS CONF PATH

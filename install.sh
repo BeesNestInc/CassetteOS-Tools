@@ -7,9 +7,9 @@
 #   This script installs CassetteOS to your system.
 #   Usage:
 #
-#       $ wget -qO- https://api.cassetteos.com/scripts/v0.0.1/install.sh | sudo bash
+#       $ wget -qO- https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.1/install.sh | sudo bash
 #         or
-#       $ curl -fsSL https://api.cassetteos.com/scripts/v0.0.1/install.sh | sudo bash
+#       $ curl -fsSL https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.1/install.sh | sudo bash
 #
 #   In automated environments, you may want to run as root.
 #   If using curl, we recommend using the -fsSL flags.
@@ -31,13 +31,14 @@ echo '
 '
 export PATH=/usr/sbin:$PATH
 export DEBIAN_FRONTEND=noninteractive
-
 set -e
 
 ###############################################################################
 # GOLBALS                                                                     #
 ###############################################################################
 
+# version
+readonly CASSETTEOS_VERSION="v0.0.2"
 ((EUID)) && sudo_cmd="sudo"
 
 # shellcheck source=/dev/null
@@ -97,7 +98,7 @@ UNAME_U="$(uname -s)"
 readonly UNAME_U
 
 readonly CASSETTE_CONF_PATH=/etc/cassetteos/gateway.ini
-readonly CASSETTE_UNINSTALL_URL="https://api.cassetteos.com/scripts/v0.0.1/uninstall.sh"
+readonly CASSETTE_UNINSTALL_URL="https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.1/uninstall.sh"
 readonly CASSETTE_UNINSTALL_PATH=/usr/bin/cassetteos-uninstall
 
 # REQUIREMENTS CONF PATH
@@ -124,7 +125,6 @@ TARGET_ARCH=""
 TMP_ROOT=/tmp/cassetteos-installer
 REGION="UNKNOWN"
 CASSETTE_DOWNLOAD_DOMAIN="https://github.com/"
-CASSETTEOS_VERSION="v0.0.2"
 
 trap 'onCtrlC' INT
 onCtrlC() {
