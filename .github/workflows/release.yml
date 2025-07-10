@@ -13,8 +13,10 @@ jobs:
       - name: 🔄 リポジトリをチェックアウト
         uses: actions/checkout@v4
 
-      - name: 🛠 GitHub CLI をセットアップ
-        uses: cli/gh-action@v1
+      - name: 🛠 gh CLI をインストール
+        run: |
+          sudo apt update
+          sudo apt install -y gh
 
       - name: 🚀 リリースアセットをアップロード
         env:
