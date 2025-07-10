@@ -30,4 +30,5 @@ jobs:
             ./uninstall.sh \
             ./db_setup.sql \
             --title "$VERSION" \
-            --notes "CassetteOS $VERSION の自動リリースです。"
+            --notes "CassetteOS $VERSION の自動リリースです。" \
+            --draft
