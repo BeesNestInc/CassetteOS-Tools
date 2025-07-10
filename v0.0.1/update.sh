@@ -1,16 +1,15 @@
 #!/usr/bin/bash
 #
-#           CasaOS Update Script v0.4.15#
-#   GitHub: https://github.com/IceWhaleTech/CasaOS
-#   Issues: https://github.com/IceWhaleTech/CasaOS/issues
+#           CassetteOS Update Script v0.0.1
+#   GitHub: https://github.com/BeesNestInc/CassetteOS
 #   Requires: bash, mv, rm, tr, grep, sed, curl/wget, tar, smartmontools, parted, ntfs-3g, net-tools
 # 
 #   This script update your CasaOS.
 #   Usage:
 #
-#   	$ wget -qO- https://get.casaos.io/update | bash
-#   	  or
-#   	$ curl -fsSL https://get.casaos.io/update | bash
+#       $ wget -qO- https://api.cassetteos.com/scripts/v0.0.1/update.sh | sudo bash
+#         or
+#       $ curl -fsSL https://api.cassetteos.com/scripts/v0.0.1/update.sh | sudo bash
 #
 #   In automated environments, you may want to run as root.
 #   If using curl, we recommend using the -fsSL flags.
@@ -22,14 +21,12 @@
 
 # shellcheck disable=SC2016
 echo '
-   _____                 ____   _____ 
-  / ____|               / __ \ / ____|
- | |     __ _ ___  __ _| |  | | (___  
- | |    / _` / __|/ _` | |  | |\___ \ 
- | |___| (_| \__ \ (_| | |__| |____) |
-  \_____\__,_|___/\__,_|\____/|_____/ 
-                                      
-   --- Made by IceWhale with YOU ---
+ ██████╗ █████╗ ███████╗███████╗███████╗████████╗████████╗███████╗ ██████╗ ███████╗
+██╔════╝██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔═══██╗██╔════╝
+██║     ███████║███████╗███████╗█████╗     ██║      ██║   █████╗  ██║   ██║███████╗
+██║     ██╔══██║╚════██║╚════██║██╔══╝     ██║      ██║   ██╔══╝  ██║   ██║╚════██║
+╚██████╗██║  ██║███████║███████║███████╗   ██║      ██║   ███████╗╚██████╔╝███████║
+ ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚══════╝ ╚═════╝ ╚══════╝
 '
 export PATH=/usr/sbin:$PATH
 set -e
