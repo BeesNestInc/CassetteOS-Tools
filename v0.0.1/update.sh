@@ -196,14 +196,14 @@ Check_Arch() {
     esac
     Show 0 "Your hardware architecture is : $UNAME_M"
     CASSETTE_PACKAGES=(
-        "${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-casaos-gateway-v0.4.9-alpha4.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-casaos-message-bus-v0.4.4-3-alpha2.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-casaos-user-service-v0.4.8.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-casaos-local-storage-v0.4.4.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-casaos-app-management-v0.4.10-alpha2.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-casaos-v0.4.15.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-casaos-cli-v0.4.4-3-alpha1.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UI/releases/download/v0.4.20/linux-all-casaos-v0.4.20.tar.gz"
+        "${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-cassetteos-gateway-v0.4.9-alpha4.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-cassetteos-message-bus-v0.4.4-3-alpha2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-cassetteos-user-service-v0.4.8.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-cassetteos-local-storage-v0.4.4.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-cassetteos-app-management-v0.4.10-alpha2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-cassetteos-v0.4.15.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-cassetteos-cli-v0.4.4-3-alpha1.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UI/releases/download/v0.4.20/linux-all-cassetteos-v0.4.20.tar.gz"
 "${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
     )
 }
