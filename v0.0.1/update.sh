@@ -184,15 +184,15 @@ Check_Arch() {
     esac
     Show 0 "Your hardware architecture is : $UNAME_M"
     CASSETTE_PACKAGES=(
-        "${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-casaos-gateway-v0.4.9-alpha4.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-casaos-message-bus-v0.4.4-3-alpha2.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-casaos-user-service-v0.4.8.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-casaos-local-storage-v0.4.4.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-casaos-app-management-v0.4.10-alpha2.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-casaos-v0.4.15.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-casaos-cli-v0.4.4-3-alpha1.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-UI/releases/download/v0.4.20/linux-all-casaos-v0.4.20.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
+        "${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-casaos-gateway-v0.4.9-alpha4.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-casaos-message-bus-v0.4.4-3-alpha2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-casaos-user-service-v0.4.8.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-casaos-local-storage-v0.4.4.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-casaos-app-management-v0.4.10-alpha2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-casaos-v0.4.15.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-casaos-cli-v0.4.4-3-alpha1.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-UI/releases/download/v0.4.20/linux-all-casaos-v0.4.20.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
     )
 }
 
@@ -464,10 +464,10 @@ DownloadAndInstallCasaOS() {
     # Modify app store configuration
     sed -i "/ServerAPI/d" "$PREFIX/etc/cassetteos/app-management.conf"
     sed -i "/ServerApi/d" "$PREFIX/etc/cassetteos/app-management.conf"
-    if grep -q "IceWhaleTech/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"; then
-        sed -i "/https:\/\/github.com\/IceWhaleTech/c\appstore = ${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"
+    if grep -q "BeesNestInc/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"; then
+        sed -i "/https:\/\/github.com\/BeesNestInc/c\appstore = ${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"
     else
-        echo "appstore = ${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/_appstore/archive/refs/heads/main.zip" >> "$PREFIX/etc/casaos/app-management.conf"
+        echo "appstore = ${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/_appstore/archive/refs/heads/main.zip" >> "$PREFIX/etc/casaos/app-management.conf"
     fi
     
     #Download Uninstall Script
