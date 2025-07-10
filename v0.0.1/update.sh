@@ -41,8 +41,8 @@ set -e
 source /etc/os-release
 
 # SYSTEM REQUIREMENTS
-readonly CASA_DEPANDS_PACKAGE=('wget' 'curl' 'smartmontools' 'parted' 'ntfs-3g' 'net-tools' 'udevil' 'samba' 'cifs-utils' 'mergerfs' 'unzip')
-readonly CASA_DEPANDS_COMMAND=('wget' 'curl' 'smartctl' 'parted' 'ntfs-3g' 'netstat' 'udevil' 'smbd' 'mount.cifs' 'mount.mergerfs' 'unzip')
+readonly CASSETTE_DEPANDS_PACKAGE=('wget' 'curl' 'smartmontools' 'parted' 'ntfs-3g' 'net-tools' 'udevil' 'samba' 'cifs-utils' 'mergerfs' 'unzip')
+readonly CASSETTE_DEPANDS_COMMAND=('wget' 'curl' 'smartctl' 'parted' 'ntfs-3g' 'netstat' 'udevil' 'smbd' 'mount.cifs' 'mount.mergerfs' 'unzip')
 
 LSB_DIST=$( ( [ -n "${ID_LIKE}" ] && echo "${ID_LIKE}" ) || ( [ -n "${ID}" ] && echo "${ID}" ) )
 readonly LSB_DIST
@@ -69,10 +69,10 @@ readonly aCOLOUR=(
 )
 
 
-# CASAOS VARIABLES
+# CASSETTEOS VARIABLES
 TARGET_ARCH=""
 TMP_ROOT=/tmp/cassetteos-installer
-CASA_DOWNLOAD_DOMAIN="https://github.com/"
+CASSETTE_DOWNLOAD_DOMAIN="https://github.com/"
 
 
 # PACKAGE LIST OF CASSETTEOS
@@ -183,16 +183,16 @@ Check_Arch() {
         ;;
     esac
     Show 0 "Your hardware architecture is : $UNAME_M"
-    CASA_PACKAGES=(
-        "${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-casaos-gateway-v0.4.9-alpha4.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-casaos-message-bus-v0.4.4-3-alpha2.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-casaos-user-service-v0.4.8.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-casaos-local-storage-v0.4.4.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-casaos-app-management-v0.4.10-alpha2.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-casaos-v0.4.15.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-casaos-cli-v0.4.4-3-alpha1.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-UI/releases/download/v0.4.20/linux-all-casaos-v0.4.20.tar.gz"
-"${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
+    CASSETTE_PACKAGES=(
+        "${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-casaos-gateway-v0.4.9-alpha4.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-casaos-message-bus-v0.4.4-3-alpha2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-casaos-user-service-v0.4.8.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-casaos-local-storage-v0.4.4.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-casaos-app-management-v0.4.10-alpha2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-casaos-v0.4.15.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-casaos-cli-v0.4.4-3-alpha1.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-UI/releases/download/v0.4.20/linux-all-casaos-v0.4.20.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/CasaOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
     )
 }
 
@@ -208,7 +208,7 @@ Check_Distribution() {
     *raspbian*)
         ;;
     *openwrt*)
-        Show 1 "Aborted, OpenWrt cannot be installed using this script, please visit ${CASA_OPENWRT_DOCS}."
+        Show 1 "Aborted, OpenWrt cannot be installed using this script, please visit ${CASSETTE_OPENWRT_DOCS}."
         exit 1
         ;;
     *alpine*)
@@ -271,10 +271,10 @@ Update_Package_Resource() {
 
 # Install depends package
 Install_Depends() {
-    for ((i = 0; i < ${#CASA_DEPANDS_COMMAND[@]}; i++)); do
-        cmd=${CASA_DEPANDS_COMMAND[i]}
+    for ((i = 0; i < ${#CASSETTE_DEPANDS_COMMAND[@]}; i++)); do
+        cmd=${CASSETTE_DEPANDS_COMMAND[i]}
         if [[ ! -x $(command -v "${cmd}") ]]; then
-            packagesNeeded=${CASA_DEPANDS_PACKAGE[i]}
+            packagesNeeded=${CASSETTE_DEPANDS_PACKAGE[i]}
             Show 2 "Install the necessary dependencies: $packagesNeeded "
             GreyStart
             if [ -x "$(command -v apk)" ]; then
@@ -300,10 +300,10 @@ Install_Depends() {
 }
 
 Check_Dependency_Installation() {
-    for ((i = 0; i < ${#CASA_DEPANDS_COMMAND[@]}; i++)); do
-        cmd=${CASA_DEPANDS_COMMAND[i]}
+    for ((i = 0; i < ${#CASSETTE_DEPANDS_COMMAND[@]}; i++)); do
+        cmd=${CASSETTE_DEPANDS_COMMAND[i]}
         if [[ ! -x $(command -v "${cmd}") ]]; then
-            packagesNeeded=${CASA_DEPANDS_PACKAGE[i]}
+            packagesNeeded=${CASSETTE_DEPANDS_PACKAGE[i]}
             Show 1 "Dependency \e[33m$packagesNeeded \e[0m installation failed, please try again manually!"
             exit 1
         fi
@@ -401,7 +401,7 @@ DownloadAndInstallCasaOS() {
 
         pushd "${TMP_DIR}"
 
-        for PACKAGE in "${CASA_PACKAGES[@]}"; do
+        for PACKAGE in "${CASSETTE_PACKAGES[@]}"; do
             Show 2 "Downloading ${PACKAGE}..."
           
             ${sudo_cmd} wget -t 3 -q --show-progress -c  "${PACKAGE}" || Show 1 "Failed to download package"
@@ -418,7 +418,7 @@ DownloadAndInstallCasaOS() {
         popd
     fi
 
-    # for SERVICE in "${CASA_SERVICES[@]}"; do
+    # for SERVICE in "${CASSETTE_SERVICES[@]}"; do
     #     Show 2 "Stopping ${SERVICE}..."
 
     #   systemctl stop "${SERVICE}" || Show 3 "Service ${SERVICE} does not exist."
@@ -465,9 +465,9 @@ DownloadAndInstallCasaOS() {
     sed -i "/ServerAPI/d" "$PREFIX/etc/cassetteos/app-management.conf"
     sed -i "/ServerApi/d" "$PREFIX/etc/cassetteos/app-management.conf"
     if grep -q "IceWhaleTech/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"; then
-        sed -i "/https:\/\/github.com\/IceWhaleTech/c\appstore = ${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"
+        sed -i "/https:\/\/github.com\/IceWhaleTech/c\appstore = ${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"
     else
-        echo "appstore = ${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/_appstore/archive/refs/heads/main.zip" >> "$PREFIX/etc/casaos/app-management.conf"
+        echo "appstore = ${CASSETTE_DOWNLOAD_DOMAIN}IceWhaleTech/_appstore/archive/refs/heads/main.zip" >> "$PREFIX/etc/casaos/app-management.conf"
     fi
     
     #Download Uninstall Script
