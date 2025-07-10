@@ -4,7 +4,7 @@
 #   GitHub: https://github.com/BeesNestInc/CassetteOS
 #   Requires: bash, mv, rm, tr, grep, sed, curl/wget, tar, smartmontools, parted, ntfs-3g, net-tools
 # 
-#   This script update your CasaOS.
+#   This script update your CassetteOS.
 #   Usage:
 #
 #       $ wget -qO- https://api.cassetteos.com/scripts/v0.0.1/update.sh | sudo bash
@@ -184,15 +184,15 @@ Check_Arch() {
     esac
     Show 0 "Your hardware architecture is : $UNAME_M"
     CASSETTE_PACKAGES=(
-        "${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-casaos-gateway-v0.4.9-alpha4.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-casaos-message-bus-v0.4.4-3-alpha2.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-casaos-user-service-v0.4.8.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-casaos-local-storage-v0.4.4.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-casaos-app-management-v0.4.10-alpha2.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-casaos-v0.4.15.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-casaos-cli-v0.4.4-3-alpha1.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-UI/releases/download/v0.4.20/linux-all-casaos-v0.4.20.tar.gz"
-"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CasaOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
+        "${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Gateway/releases/download/v0.4.9-alpha4/linux-${TARGET_ARCH}-casaos-gateway-v0.4.9-alpha4.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-MessageBus/releases/download/v0.4.4-3-alpha2/linux-${TARGET_ARCH}-casaos-message-bus-v0.4.4-3-alpha2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UserService/releases/download/v0.4.8/linux-${TARGET_ARCH}-casaos-user-service-v0.4.8.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-LocalStorage/releases/download/v0.4.4/linux-${TARGET_ARCH}-casaos-local-storage-v0.4.4.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppManagement/releases/download/v0.4.10-alpha2/linux-${TARGET_ARCH}-casaos-app-management-v0.4.10-alpha2.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS/releases/download/v0.4.15/linux-${TARGET_ARCH}-casaos-v0.4.15.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-CLI/releases/download/v0.4.4-3-alpha1/linux-${TARGET_ARCH}-casaos-cli-v0.4.4-3-alpha1.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-UI/releases/download/v0.4.20/linux-all-casaos-v0.4.20.tar.gz"
+"${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-AppStore/releases/download/v0.4.5/linux-all-appstore-v0.4.5.tar.gz" 
     )
 }
 
@@ -354,7 +354,7 @@ Install_Rclone() {
 
 #Configuration Addons
 Configuration_Addons() {
-    Show 2 "Configuration CasaOS Addons"
+    Show 2 "Configuration CassetteOS Addons"
     #Remove old udev rules
     if [[ -f "${PREFIX}/etc/udev/rules.d/11-usb-mount.rules" ]]; then
         ${sudo_cmd} rm -rf "${PREFIX}/etc/udev/rules.d/11-usb-mount.rules"
@@ -367,7 +367,7 @@ Configuration_Addons() {
     #Udevil
     if [[ -f "${PREFIX}${UDEVIL_CONF_PATH}" ]]; then
 
-        # Revert previous CasaOS udevil configuration
+        # Revert previous CassetteOS udevil configuration
         #shellcheck disable=SC2016
         ${sudo_cmd} sed -i 's/allowed_media_dirs = \/DATA, \/DATA\/$USER/allowed_media_dirs = \/media, \/media\/$USER, \/run\/media\/$USER/g' "${PREFIX}${UDEVIL_CONF_PATH}"
         ${sudo_cmd} sed -i '/exfat/s/, nonempty//g' "$PREFIX"${UDEVIL_CONF_PATH}
@@ -391,8 +391,8 @@ Configuration_Addons() {
     fi
 }
 
-# Download And Install CasaOS
-DownloadAndInstallCasaOS() {
+# Download And Install CassetteOS
+DownloadAndInstallCassetteOS() {
 
     if [ -z "${BUILD_DIR}" ]; then
 
@@ -434,7 +434,7 @@ DownloadAndInstallCasaOS() {
 
     done
 
-    Show 2 "Installing CasaOS..."
+    Show 2 "Installing CassetteOS..."
     SYSROOT_DIR=$(realpath -e "${BUILD_DIR}"/sysroot || Show 1 "Failed to find sysroot directory")
 
     # Generate manifest for uninstallation
@@ -446,7 +446,7 @@ DownloadAndInstallCasaOS() {
     # Remove old UI files.
     ${sudo_cmd} rm -rf /var/lib/cassetteos/www/*
     
-    ${sudo_cmd} cp -rf "${SYSROOT_DIR}"/* / >> /dev/null || Show 1 "Failed to install CasaOS"
+    ${sudo_cmd} cp -rf "${SYSROOT_DIR}"/* / >> /dev/null || Show 1 "Failed to install CassetteOS"
 
     SETUP_SCRIPT_DIR=$(realpath -e "${BUILD_DIR}"/scripts/setup/script.d || Show 1 "Failed to find setup script directory")
 
@@ -485,7 +485,7 @@ DownloadAndInstallCasaOS() {
     
     ## Special markings
 
-    Show 0 "CasaOS upgrade successfully"
+    Show 0 "CassetteOS upgrade successfully"
     for SERVICE in "${CASSETTE_SERVICES[@]}"; do
         Show 2 "restart ${SERVICE}..."
 
@@ -537,5 +537,5 @@ Check_Dependency_Installation
 # Step 3: Configuration Addon
 Configuration_Addons
 
-# Step 4: Download And Install CasaOS
-DownloadAndInstallCasaOS
+# Step 4: Download And Install CassetteOS
+DownloadAndInstallCassetteOS
