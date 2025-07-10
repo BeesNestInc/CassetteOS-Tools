@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: 🛠 GitHub CLI をセットアップ
+        uses: cli/gh-action@v2
+
+      - name: 🚀 リリースアセットをアップロード
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${GITHUB_REF##*/}
+
+          gh release create "$VERSION" \
+            ./scripts/install.sh \
+            ./scripts/update.sh \
+            ./scripts/uninstall.sh \
+            --title "$VERSION" \
+            --notes "CassetteOS $VERSION の自動リリースです。"
