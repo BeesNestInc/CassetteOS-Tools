@@ -71,20 +71,20 @@ readonly aCOLOUR=(
 
 # CASAOS VARIABLES
 TARGET_ARCH=""
-TMP_ROOT=/tmp/casaos-installer
+TMP_ROOT=/tmp/cassetteos-installer
 CASA_DOWNLOAD_DOMAIN="https://github.com/"
 
 
-# PACKAGE LIST OF CASAOS
-CASA_SERVICES=(
-    "casaos-gateway.service"
-"casaos-message-bus.service"
-"casaos-user-service.service"
-"casaos-local-storage.service"
-"casaos-app-management.service"
-"rclone.service"
-"casaos.service"  # must be the last one so update from UI can work 
+# PACKAGE LIST OF CASSETTEOS
+CASSETTE_SERVICES=(
+    "cassetteos-gateway.service"
+"cassetteos-message-bus.service"
+"cassetteos-user-service.service"
+"cassetteos-local-storage.service"
+"cassetteos-app-management.service"
+"cassetteos.service"  # must be the last one so update from UI can work 
 )
+
 
 trap 'onCtrlC' INT
 onCtrlC() {
@@ -93,8 +93,8 @@ onCtrlC() {
 }
 
 
-upgradePath="/var/log/casaos"
-upgradeFile="/var/log/casaos/upgrade.log"
+upgradePath="/var/log/cassetteos"
+upgradeFile="/var/log/cassetteos/upgrade.log"
 
 if [ -f "$upgradePath" ]; then
     ${sudo_cmd} rm "$upgradePath"
@@ -126,17 +126,17 @@ fi
 Show() {
     # OK
     if (($1 == 0)); then
-    	echo -e "- OK $2" | ${sudo_cmd} tee -a /var/log/casaos/upgrade.log
+    	echo -e "- OK $2" | ${sudo_cmd} tee -a /var/log/cassetteos/upgrade.log
     # FAILED
     elif (($1 == 1)); then
-     	echo -e "- FAILED $2" | ${sudo_cmd} tee -a /var/log/casaos/upgrade.log
+     	echo -e "- FAILED $2" | ${sudo_cmd} tee -a /var/log/cassetteos/upgrade.log
 	exit 1
     # INFO
     elif (($1 == 2)); then
-    	echo -e "- INFO $2" | ${sudo_cmd} tee -a /var/log/casaos/upgrade.log
+    	echo -e "- INFO $2" | ${sudo_cmd} tee -a /var/log/cassetteos/upgrade.log
     # NOTICE
     elif (($1 == 3)); then
-    	echo -e "- NOTICE $2" | ${sudo_cmd} tee -a /var/log/casaos/upgrade.log
+    	echo -e "- NOTICE $2" | ${sudo_cmd} tee -a /var/log/cassetteos/upgrade.log
     fi
 }
 
@@ -451,13 +451,13 @@ DownloadAndInstallCasaOS() {
     SYSROOT_DIR=$(realpath -e "${BUILD_DIR}"/sysroot || Show 1 "Failed to find sysroot directory")
 
     # Generate manifest for uninstallation
-    MANIFEST_FILE=${BUILD_DIR}/sysroot/var/lib/casaos/manifest
+    MANIFEST_FILE=${BUILD_DIR}/sysroot/var/lib/cassetteos/manifest
     ${sudo_cmd} touch "${MANIFEST_FILE}" || Show 1 "Failed to create manifest file"
 
     find "${SYSROOT_DIR}" -type f | ${sudo_cmd} cut -c ${#SYSROOT_DIR}- | ${sudo_cmd} cut -c 2- | ${sudo_cmd} tee "${MANIFEST_FILE}" >/dev/null || Show 1 "Failed to create manifest file"
     
     # Remove old UI files.
-    ${sudo_cmd} rm -rf /var/lib/casaos/www/*
+    ${sudo_cmd} rm -rf /var/lib/cassetteos/www/*
     
     ${sudo_cmd} cp -rf "${SYSROOT_DIR}"/* / >> /dev/null || Show 1 "Failed to install CasaOS"
 
@@ -469,14 +469,14 @@ DownloadAndInstallCasaOS() {
     done
     
     # Reset Permissions
-    UI_EVENTS_REG_SCRIPT=/etc/casaos/start.d/register-ui-events.sh
+    UI_EVENTS_REG_SCRIPT=/etc/cassetteos/start.d/register-ui-events.sh
     if [[ -f ${UI_EVENTS_REG_SCRIPT} ]]; then
         ${sudo_cmd} chmod +x $UI_EVENTS_REG_SCRIPT
     fi
     
     # Modify app store configuration
-    sed -i "/ServerAPI/d" "$PREFIX/etc/casaos/app-management.conf"
-    sed -i "/ServerApi/d" "$PREFIX/etc/casaos/app-management.conf"
+    sed -i "/ServerAPI/d" "$PREFIX/etc/cassetteos/app-management.conf"
+    sed -i "/ServerApi/d" "$PREFIX/etc/cassetteos/app-management.conf"
     if grep -q "IceWhaleTech/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"; then
         sed -i "/https:\/\/github.com\/IceWhaleTech/c\appstore = ${CASA_DOWNLOAD_DOMAIN}IceWhaleTech/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"
     else
@@ -484,8 +484,8 @@ DownloadAndInstallCasaOS() {
     fi
     
     #Download Uninstall Script
-    if [[ -f ${PREFIX}/tmp/casaos-uninstall ]]; then
-        ${sudo_cmd} rm -rf "${PREFIX}/tmp/casaos-uninstall"
+    if [[ -f ${PREFIX}/tmp/cassetteos-uninstall ]]; then
+        ${sudo_cmd} rm -rf "${PREFIX}/tmp/cassetteos-uninstall"
     fi
     ${sudo_cmd} curl -fsSLk "$CASSETTE_UNINSTALL_URL" >"${PREFIX}/tmp/cassetteos-uninstall"
     ${sudo_cmd} cp -rvf "${PREFIX}/tmp/cassetteos-uninstall" $CASSETTE_UNINSTALL_PATH || {
@@ -499,7 +499,7 @@ DownloadAndInstallCasaOS() {
     ## Special markings
 
     Show 0 "CasaOS upgrade successfully"
-    for SERVICE in "${CASA_SERVICES[@]}"; do
+    for SERVICE in "${CASSETTE_SERVICES[@]}"; do
         Show 2 "restart ${SERVICE}..."
 
         ${sudo_cmd} systemctl restart "${SERVICE}" || Show 3 "Service ${SERVICE} does not exist."
