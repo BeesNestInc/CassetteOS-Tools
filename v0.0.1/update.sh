@@ -435,10 +435,10 @@ DownloadAndInstallCassetteOS() {
     # Modify app store configuration
     sed -i "/ServerAPI/d" "$PREFIX/etc/cassetteos/app-management.conf"
     sed -i "/ServerApi/d" "$PREFIX/etc/cassetteos/app-management.conf"
-    if grep -q "BeesNestInc/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"; then
-        sed -i "/https:\/\/github.com\/BeesNestInc/c\appstore = ${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/casaos/app-management.conf"
+    if grep -q "BeesNestInc/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/cassetteos/app-management.conf"; then
+        sed -i "/https:\/\/github.com\/BeesNestInc/c\appstore = ${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/_appstore/archive/refs/heads/main.zip" "$PREFIX/etc/cassetteos/app-management.conf"
     else
-        echo "appstore = ${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/_appstore/archive/refs/heads/main.zip" >> "$PREFIX/etc/casaos/app-management.conf"
+        echo "appstore = ${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/_appstore/archive/refs/heads/main.zip" >> "$PREFIX/etc/cassetteos/app-management.conf"
     fi
     
     #Download Uninstall Script
