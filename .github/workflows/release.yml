@@ -25,8 +25,9 @@ jobs:
           VERSION=${GITHUB_REF##*/}
 
           gh release create "$VERSION" \
-            ./scripts/install.sh \
-            ./scripts/update.sh \
-            ./scripts/uninstall.sh \
+            ./install.sh \
+            ./update.sh \
+            ./uninstall.sh \
+            ./db_setup.sql \
             --title "$VERSION" \
             --notes "CassetteOS $VERSION の自動リリースです。"
