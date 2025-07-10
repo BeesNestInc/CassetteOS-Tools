@@ -50,9 +50,8 @@ readonly LSB_DIST
 UNAME_M="$(uname -m)"
 readonly UNAME_M
 
-
-readonly CASA_UNINSTALL_URL="https://get.casaos.io/uninstall/v0.4.15"
-readonly CASA_UNINSTALL_PATH=/usr/bin/casaos-uninstall
+readonly CASSETTE_UNINSTALL_URL="https://api.cassetteos.com/scripts/v0.0.1/uninstall.sh"
+readonly CASSETTE_UNINSTALL_PATH=/usr/bin/cassetteos-uninstall
 
 # REQUIREMENTS CONF PATH
 # Udevil
@@ -488,13 +487,13 @@ DownloadAndInstallCasaOS() {
     if [[ -f ${PREFIX}/tmp/casaos-uninstall ]]; then
         ${sudo_cmd} rm -rf "${PREFIX}/tmp/casaos-uninstall"
     fi
-    ${sudo_cmd} curl -fsSLk "$CASA_UNINSTALL_URL" >"${PREFIX}/tmp/casaos-uninstall"
-    ${sudo_cmd} cp -rvf "${PREFIX}/tmp/casaos-uninstall" $CASA_UNINSTALL_PATH || {
+    ${sudo_cmd} curl -fsSLk "$CASSETTE_UNINSTALL_URL" >"${PREFIX}/tmp/cassetteos-uninstall"
+    ${sudo_cmd} cp -rvf "${PREFIX}/tmp/cassetteos-uninstall" $CASSETTE_UNINSTALL_PATH || {
         Show 1 "Download uninstall script failed, Please check if your internet connection is working and retry."
         exit 1
     }
 
-    ${sudo_cmd} chmod +x $CASA_UNINSTALL_PATH
+    ${sudo_cmd} chmod +x $CASSETTE_UNINSTALL_PATH
     Install_Rclone
     
     ## Special markings
