@@ -41,8 +41,20 @@ set -e
 source /etc/os-release
 
 # SYSTEM REQUIREMENTS
-readonly CASSETTE_DEPANDS_PACKAGE=('wget' 'curl' 'smartmontools' 'parted' 'ntfs-3g' 'net-tools' 'udevil' 'samba' 'cifs-utils' 'mergerfs' 'unzip')
-readonly CASSETTE_DEPANDS_COMMAND=('wget' 'curl' 'smartctl' 'parted' 'ntfs-3g' 'netstat' 'udevil' 'smbd' 'mount.cifs' 'mount.mergerfs' 'unzip')
+# 🛠️ 本体インストール用
+readonly CASSETTE_DEPENDS_LIST=(
+  "wget:wget"
+  "curl:curl"
+  "smartctl:smartmontools"
+  "parted:parted"
+  "ntfs-3g:ntfs-3g"
+  "netstat:net-tools"
+  "udevil:udevil"
+  "smbd:samba"
+  "mount.cifs:cifs-utils"
+  "mount.mergerfs:mergerfs"
+  "unzip:unzip"
+)
 
 LSB_DIST=$( ( [ -n "${ID_LIKE}" ] && echo "${ID_LIKE}" ) || ( [ -n "${ID}" ] && echo "${ID}" ) )
 readonly LSB_DIST
@@ -269,42 +281,43 @@ Update_Package_Resource() {
     ColorReset
 }
 
-# Install depends package
 Install_Depends() {
-    for ((i = 0; i < ${#CASSETTE_DEPANDS_COMMAND[@]}; i++)); do
-        cmd=${CASSETTE_DEPANDS_COMMAND[i]}
-        if [[ ! -x $(command -v "${cmd}") ]]; then
-            packagesNeeded=${CASSETTE_DEPANDS_PACKAGE[i]}
-            Show 2 "Install the necessary dependencies: $packagesNeeded "
+    local dep_list=("$@")
+
+    for pair in "${dep_list[@]}"; do
+        IFS=':' read -r cmd pkg <<< "$pair"
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            Show 2 "Installing missing dependency: \e[33m$pkg\e[0m (for $cmd)"
             GreyStart
             if [ -x "$(command -v apk)" ]; then
-                ${sudo_cmd} apk add --no-cache "$packagesNeeded"
+                ${sudo_cmd} apk add --no-cache "$pkg"
             elif [ -x "$(command -v apt-get)" ]; then
-                ${sudo_cmd} apt-get -y -q install "$packagesNeeded" --no-upgrade
+                ${sudo_cmd} apt-get -y -qq install "$pkg" --no-upgrade
             elif [ -x "$(command -v dnf)" ]; then
-                ${sudo_cmd} dnf install "$packagesNeeded"
+                ${sudo_cmd} dnf install -y "$pkg"
             elif [ -x "$(command -v zypper)" ]; then
-                ${sudo_cmd} zypper install "$packagesNeeded"
+                ${sudo_cmd} zypper install -y "$pkg"
             elif [ -x "$(command -v yum)" ]; then
-                ${sudo_cmd} yum install "$packagesNeeded"
+                ${sudo_cmd} yum install -y "$pkg"
             elif [ -x "$(command -v pacman)" ]; then
-                ${sudo_cmd} pacman -S "$packagesNeeded"
+                ${sudo_cmd} pacman -S --noconfirm "$pkg"
             elif [ -x "$(command -v paru)" ]; then
-                ${sudo_cmd} paru -S "$packagesNeeded"
+                ${sudo_cmd} paru -S --noconfirm "$pkg"
             else
-                Show 1 "Package manager not found. You must manually install: $packagesNeeded"
+                Show 1 "Package manager not found. You must manually install: \e[33m$pkg\e[0m"
             fi
             ColorReset
         fi
     done
 }
 
-Check_Dependency_Installation() {
-    for ((i = 0; i < ${#CASSETTE_DEPANDS_COMMAND[@]}; i++)); do
-        cmd=${CASSETTE_DEPANDS_COMMAND[i]}
-        if [[ ! -x $(command -v "${cmd}") ]]; then
-            packagesNeeded=${CASSETTE_DEPANDS_PACKAGE[i]}
-            Show 1 "Dependency \e[33m$packagesNeeded \e[0m installation failed, please try again manually!"
+Check_Depends_Installed() {
+    local dep_list=("$@")
+
+    for pair in "${dep_list[@]}"; do
+        IFS=':' read -r cmd pkg <<< "$pair"
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            Show 1 "Dependency \e[33m$pkg\e[0m (command: $cmd) is still missing after installation. Please check manually."
             exit 1
         fi
     done
@@ -487,9 +500,8 @@ Check_Arch
 
 # Step 2: Install Depends
 Update_Package_Resource
-Install_Depends
-Check_Dependency_Installation
-
+Install_Depends "${CASSETTE_DEPENDS_LIST[@]}"
+Check_Depends_Installed "${CASSETTE_DEPENDS_LIST[@]}"
 
 # Step 3: Configuration Addon
 Configuration_Addons
