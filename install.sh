@@ -98,7 +98,7 @@ UNAME_U="$(uname -s)"
 readonly UNAME_U
 
 readonly CASSETTE_CONF_PATH=/etc/cassetteos/gateway.ini
-readonly CASSETTE_UNINSTALL_URL="https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.1/uninstall.sh"
+readonly CASSETTE_UNINSTALL_URL="https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/${CASSETTEOS_VERSION}/uninstall.sh"
 readonly CASSETTE_UNINSTALL_PATH=/usr/bin/cassetteos-uninstall
 
 # REQUIREMENTS CONF PATH
