@@ -702,7 +702,7 @@ Configure_Postgres_ListenAddresses() {
     echo "listen_addresses='*'" | ${sudo_cmd} tee -a "$PG_CONF" >/dev/null
 }
 Install_DbAdmin_StoredProcedure() {
-    local SCRIPT_URL="https://api.cassetteos.com/scripts/v0.0.1/db_setup.sql"
+    local SCRIPT_URL="https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/${CASSETTEOS_VERSION}/db_setup.sql"
     local SCRIPT_PATH="/tmp/db_setup.sql"
 
     Show 2 "Downloading db_admin_user setup script from: $SCRIPT_URL"
