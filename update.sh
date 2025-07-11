@@ -35,6 +35,8 @@ set -e
 # GOLBALS                                                                     #
 ###############################################################################
 
+CASSETTEOS_VERSION="v0.0.2"
+
 ((EUID)) && sudo_cmd="sudo"
 
 # shellcheck source=/dev/null
@@ -62,7 +64,7 @@ readonly LSB_DIST
 UNAME_M="$(uname -m)"
 readonly UNAME_M
 
-readonly CASSETTE_UNINSTALL_URL="https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.1/uninstall.sh"
+readonly CASSETTE_UNINSTALL_URL="https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/${CASSETTEOS_VERSION}/uninstall.sh"
 readonly CASSETTE_UNINSTALL_PATH=/usr/bin/cassetteos-uninstall
 
 # REQUIREMENTS CONF PATH
@@ -85,7 +87,6 @@ readonly aCOLOUR=(
 TARGET_ARCH=""
 TMP_ROOT=/tmp/cassetteos-installer
 CASSETTE_DOWNLOAD_DOMAIN="https://github.com/"
-CASSETTEOS_VERSION="v0.0.2"
 
 # PACKAGE LIST OF CASSETTEOS
 CASSETTE_SERVICES=(
