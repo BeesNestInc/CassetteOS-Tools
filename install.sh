@@ -125,6 +125,7 @@ TARGET_ARCH=""
 TMP_ROOT=/tmp/cassetteos-installer
 REGION="UNKNOWN"
 CASSETTE_DOWNLOAD_DOMAIN="https://github.com/"
+CONFIG_FILE="/etc/cassetteos/cassetteos.conf"
 
 trap 'onCtrlC' INT
 onCtrlC() {
@@ -654,6 +655,35 @@ Welcome_Banner() {
     echo -e " ${COLOUR_RESET}${aCOLOUR[1]}Uninstall       ${COLOUR_RESET}: cassetteos-uninstall"
     echo -e "${COLOUR_RESET}"
 }
+set_ini_value() {
+    local file="$1"
+    local section="$2"
+    local key="$3"
+    local value="$4"
+
+    # セクションが存在しない場合は末尾に追加
+    if ! grep -q "^\[$section\]" "$file"; then
+        echo -e "\n[$section]" >> "$file"
+    fi
+
+    # セクション行の行番号取得
+    local section_line
+    section_line=$(grep -n "^\[$section\]" "$file" | cut -d: -f1 | head -n1)
+
+    # セクションの次に同じキーが存在するか確認
+    if awk -v s="$section" -v k="$key" '
+        $0 ~ "\\[" s "\\]" { in_section=1; next }
+        /^\[.*\]/ { in_section=0 }
+        in_section && $1 == k { found=1 }
+        END { exit !found }
+    ' "$file"; then
+        # 上書き
+        sed -i "/^\[$section\]/, /^\[.*\]/ s|^$key *=.*|$key = $value|" "$file"
+    else
+        # セクション直下に追記
+        sed -i "$((section_line + 1)) i$key = $value" "$file"
+    fi
+}
 
 Configure_PgHba() {
     local PG_HBA
@@ -842,7 +872,6 @@ Configure_wifi_access(){
     else
         echo "⏩ Skipping AP mode switch."
     fi
-
 }
 ###############################################################################
 # Main                                                                        #
@@ -915,10 +944,16 @@ DownloadAndInstallCassetteOS
 
 if [ "$USE_HOST_DB" = true ]; then
     Configure_host_database
+    set_ini_value "$CONFIG_FILE" "app" "EnableHostDB" "true"
+else
+    set_ini_value "$CONFIG_FILE" "app" "EnableHostDB" "false"
 fi
 
 if [ "$ENABLE_WIFI_SETUP" = true ]; then
     Configure_wifi_access
+    set_ini_value "$CONFIG_FILE" "app" "EnableWifiSetup" "true"
+else
+    set_ini_value "$CONFIG_FILE" "app" "EnableWifiSetup" "false"
 fi
 
 # Step 9: Check Service Status
