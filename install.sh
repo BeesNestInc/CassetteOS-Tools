@@ -852,15 +852,6 @@ Configure_wifi_access(){
 
     sudo systemctl unmask hostapd
 
-    ENV_FILE="/etc/cassetteos/env"
-
-    if ! grep -q "^AP_IP_ADDRESS=" "$ENV_FILE"; then
-        echo -e "\nAP_IP_ADDRESS=192.168.4.1" | sudo tee -a "$ENV_FILE" > /dev/null
-        echo "✅ AP_IP_ADDRESS written to $ENV_FILE"
-    else
-        echo "ℹ️  $ENV_FILE already contains AP_IP_ADDRESS"
-    fi
-
     Create_Hostapd_Config
     Create_Dnsmasq_Config
 
