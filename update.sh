@@ -1,15 +1,15 @@
 #!/usr/bin/bash
 #
-#           CassetteOS Update Script v0.0.5
+#           CassetteOS Update Script v0.0.6
 #   GitHub: https://github.com/BeesNestInc/CassetteOS
 #   Requires: bash, mv, rm, tr, grep, sed, curl/wget, tar, smartmontools, parted, ntfs-3g, net-tools
 # 
 #   This script update your CassetteOS.
 #   Usage:
 #
-#       $ wget -qO- https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.5/update.sh | sudo bash
+#       $ wget -qO- https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.6/update.sh | sudo bash
 #         or
-#       $ curl -fsSL https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.5/update.sh | sudo bash
+#       $ curl -fsSL https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.6/update.sh | sudo bash
 #
 #   In automated environments, you may want to run as root.
 #   If using curl, we recommend using the -fsSL flags.
@@ -36,7 +36,7 @@ set -e
 ###############################################################################
 
 # version
-readonly CASSETTEOS_VERSION="v0.0.5"
+readonly CASSETTEOS_VERSION="v0.0.6"
 
 ((EUID)) && sudo_cmd="sudo"
 

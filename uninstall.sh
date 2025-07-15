@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#           CassetteOS Uninstaller Script v0.0.5#
+#           CassetteOS Uninstaller Script v0.0.6#
 #   GitHub: https://github.com/BeesNestInc/CassetteOS
 #   Requires: bash, mv, rm, tr, grep, sed
 #
