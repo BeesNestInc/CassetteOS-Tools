@@ -755,7 +755,8 @@ Restart_Postgres_Service() {
         Show 2 "PostgreSQL reloaded successfully!"
     else
         Show 2 "Reload failed, trying full restart..."
-        ${sudo_cmd} systemctl restart postgresql
+        ${sudo_cmd} systemctl stop postgresql
+        ${sudo_cmd} systemctl start postgresql
         Show 2 "PostgreSQL restarted."
     fi
 }
