@@ -947,6 +947,10 @@ else
     set_ini_value "$CONFIG_FILE" "app" "EnableWifiSetup" "false"
 fi
 
+echo "CassetteOS Restarting...."
+${sudo_cmd} systemctl stop "cassetteos.service"
+${sudo_cmd} systemctl start "cassetteos.service"
+
 # Step 9: Check Service Status
 Check_Service_status
 
