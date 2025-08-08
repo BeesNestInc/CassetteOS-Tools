@@ -750,15 +750,9 @@ Install_DbAdmin_StoredProcedure() {
     Show 2 "DB admin setup script completed successfully!"
 }
 Restart_Postgres_Service() {
-    Show 2 "Reloading PostgreSQL service..."
-    if ${sudo_cmd} systemctl reload postgresql 2>/dev/null; then
-        Show 2 "PostgreSQL reloaded successfully!"
-    else
-        Show 2 "Reload failed, trying full restart..."
-        ${sudo_cmd} systemctl stop postgresql
-        ${sudo_cmd} systemctl start postgresql
-        Show 2 "PostgreSQL restarted."
-    fi
+    ${sudo_cmd} systemctl stop postgresql
+    ${sudo_cmd} systemctl start postgresql
+    Show 2 "PostgreSQL restarted."
 }
 
 Configure_host_database(){
