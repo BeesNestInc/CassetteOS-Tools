@@ -807,6 +807,10 @@ wpa=2
 wpa_passphrase=$PASSPHRASE
 wpa_key_mgmt=WPA-PSK
 rsn_pairwise=CCMP
+country_code=JP
+ieee80211d=1
+ieee80211n=1
+wmm_enabled=1
 EOF
 
     echo "✅ Created $HOSTAPD_CONF"
@@ -834,6 +838,9 @@ server=8.8.8.8
 server=1.1.1.1
 log-queries
 log-dhcp
+listen-address=192.168.4.1
+listen-address=127.0.0.1
+address=/msftconnecttest.com/192.168.4.1
 EOF
 
     echo "✅ Created $DNSMASQ_CONF"
