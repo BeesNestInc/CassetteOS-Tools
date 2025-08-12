@@ -1,15 +1,15 @@
 #!/usr/bin/bash
 #
-#           CassetteOS Installer Script v0.0.7
+#           CassetteOS Installer Script v0.0.8
 #   GitHub: https://github.com/BeesNestInc/CassetteOS
 #   Requires: bash, mv, rm, tr, grep, sed, curl/wget, tar, smartmontools, parted, ntfs-3g, net-tools
 #
 #   This script installs CassetteOS to your system.
 #   Usage:
 #
-#       $ wget -qO- https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.7/install.sh | sudo bash
+#       $ wget -qO- https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.8/install.sh | sudo bash
 #         or
-#       $ curl -fsSL https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.7/install.sh | sudo bash
+#       $ curl -fsSL https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/v0.0.8/install.sh | sudo bash
 #
 #   In automated environments, you may want to run as root.
 #   If using curl, we recommend using the -fsSL flags.
@@ -38,7 +38,7 @@ set -e
 ###############################################################################
 
 # version
-readonly CASSETTEOS_VERSION="v0.0.7"
+readonly CASSETTEOS_VERSION="v0.0.8"
 ((EUID)) && sudo_cmd="sudo"
 
 # shellcheck source=/dev/null
