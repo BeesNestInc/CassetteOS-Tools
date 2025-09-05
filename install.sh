@@ -876,26 +876,15 @@ usage() {
                 Usage: install.sh [options]
                 Valid options are:
                     -p <build_dir>          Specify build directory (Local install)
-                    -H                      Use host database instead of Docker DB
-                    -W                      Enable WiFi setup feature
                     -h                      Show this help message and exit
 EOF
     exit "$1"
 }
 
-USE_HOST_DB=false
-ENABLE_WIFI_SETUP=false
-
 while getopts ":p:HWh" arg; do
     case "$arg" in
     p)
         BUILD_DIR=$OPTARG
-        ;;
-    H)
-        USE_HOST_DB=true
-        ;;
-    W)
-        ENABLE_WIFI_SETUP=true
         ;;
     h)
         usage 0
@@ -935,19 +924,11 @@ Configuration_Addons
 # Step 8: Download And Install CassetteOS
 DownloadAndInstallCassetteOS
 
-if [ "$USE_HOST_DB" = true ]; then
-    Configure_host_database
-    set_ini_value "$CONFIG_FILE" "app" "EnableHostDB" "true"
-else
-    set_ini_value "$CONFIG_FILE" "app" "EnableHostDB" "false"
-fi
+Configure_host_database
+set_ini_value "$CONFIG_FILE" "app" "EnableHostDB" "true"
 
-if [ "$ENABLE_WIFI_SETUP" = true ]; then
-    Configure_wifi_access
-    set_ini_value "$CONFIG_FILE" "app" "EnableWifiSetup" "true"
-else
-    set_ini_value "$CONFIG_FILE" "app" "EnableWifiSetup" "false"
-fi
+Configure_wifi_access
+set_ini_value "$CONFIG_FILE" "app" "EnableWifiSetup" "true"
 
 echo "CassetteOS Restarting...."
 ${sudo_cmd} systemctl stop "cassetteos.service"
