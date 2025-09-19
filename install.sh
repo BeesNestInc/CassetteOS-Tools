@@ -126,7 +126,7 @@ TMP_ROOT=/tmp/cassetteos-installer
 REGION="UNKNOWN"
 CASSETTE_DOWNLOAD_DOMAIN="https://github.com/"
 CONFIG_FILE="/etc/cassetteos/cassetteos.conf"
-
+INTERFACE=$(sudo iw dev | awk '$1=="Interface"{print $2}')
 trap 'onCtrlC' INT
 onCtrlC() {
     echo -e "${COLOUR_RESET}"
@@ -781,13 +781,6 @@ Create_Hostapd_Config(){
 
     [ -f "$HOSTAPD_CONF" ] && sudo cp "$HOSTAPD_CONF" "$HOSTAPD_CONF.bak.$(date +%s)"
     
-    # interface取得
-    local INTERFACE=$(sudo iw dev | awk '$1=="Interface"{print $2}')
-    if [[ -z "$INTERFACE" ]]; then
-        echo "❌ No wireless interface found. Aborting."
-        return 1
-    fi
-
     # SSIDとパスワードを取得
     read -p "📶 Enter SSID for AP [default: Setup-WiFi]: " SSID
     SSID=${SSID:-Setup-WiFi}
@@ -821,12 +814,6 @@ Create_Dnsmasq_Config(){
     echo "🛠 Creating dnsmasq.conf..."
 
     [ -f "$DNSMASQ_CONF" ] && sudo cp "$DNSMASQ_CONF" "$DNSMASQ_CONF.bak.$(date +%s)"
-
-    local INTERFACE=$(sudo iw dev | awk '$1=="Interface"{print $2}')
-    if [[ -z "$INTERFACE" ]]; then
-        echo "❌ No wireless interface found. Aborting."
-        return 1
-    fi
 
     sudo tee "$DNSMASQ_CONF" > /dev/null <<EOF
 interface=$INTERFACE
@@ -927,8 +914,13 @@ DownloadAndInstallCassetteOS
 Configure_host_database
 set_ini_value "$CONFIG_FILE" "app" "EnableHostDB" "true"
 
-Configure_wifi_access
-set_ini_value "$CONFIG_FILE" "app" "EnableWifiSetup" "true"
+if [[ -z "$INTERFACE" ]]; then
+    echo "❌ No wireless interface found. Aborting."
+    set_ini_value "$CONFIG_FILE" "app" "EnableWifiSetup" "false"
+else
+    Configure_wifi_access
+    set_ini_value "$CONFIG_FILE" "app" "EnableWifiSetup" "true"
+fi
 
 echo "CassetteOS Restarting...."
 ${sudo_cmd} systemctl stop "cassetteos.service"
