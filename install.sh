@@ -773,6 +773,12 @@ Configure_host_database(){
     # service stop and start
     Restart_Postgres_Service
 }
+Create_Docker_Network() {
+  docker network create \
+  --driver bridge \
+  --subnet 172.30.0.0/16 \
+  cassetteos
+}
 Create_Hostapd_Config(){
     local HOSTAPD_CONF="/etc/hostapd/hostapd.conf"
 
@@ -913,7 +919,7 @@ DownloadAndInstallCassetteOS
 
 Configure_host_database
 set_ini_value "$CONFIG_FILE" "app" "EnableHostDB" "true"
-
+Create_Docker_Network
 if [[ -z "$INTERFACE" ]]; then
     echo "❌ No wireless interface found. Aborting."
     set_ini_value "$CONFIG_FILE" "app" "EnableWifiSetup" "false"
