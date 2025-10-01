@@ -1,5 +1,5 @@
--- ストアドプロシージャ専用のユーザーを作成（passswordなし）
-CREATE ROLE db_admin_user WITH LOGIN;
+-- ストアドプロシージャ専用のユーザーを作成（passswordあり）
+CREATE ROLE db_admin_user WITH LOGIN PASSWORD :'db_admin_password';
 
 -- このユーザーにはスーパーユーザー権限を付与しない
 REVOKE ALL ON SCHEMA public FROM db_admin_user;

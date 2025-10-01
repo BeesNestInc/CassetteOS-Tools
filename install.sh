@@ -126,6 +126,7 @@ TMP_ROOT=/tmp/cassetteos-installer
 REGION="UNKNOWN"
 CASSETTE_DOWNLOAD_DOMAIN="https://github.com/"
 CONFIG_FILE="/etc/cassetteos/cassetteos.conf"
+APP_CONFIG_FILE="/etc/cassetteos/app-management.conf"
 INTERFACE=$(sudo iw dev | awk '$1=="Interface"{print $2}')
 trap 'onCtrlC' INT
 onCtrlC() {
@@ -735,19 +736,28 @@ Install_DbAdmin_StoredProcedure() {
     local SCRIPT_URL="https://github.com/BeesNestInc/CassetteOS-Tools/releases/download/${CASSETTEOS_VERSION}/db_setup.sql"
     local SCRIPT_PATH="/tmp/db_setup.sql"
 
+    Show 2 "Generating a secure password for db_admin_user..."
+    DB_ADMIN_PASSWORD=$(openssl rand -base64 24)
+    if [ -z "$DB_ADMIN_PASSWORD" ]; then
+        Show 1 "Failed to generate password!"
+        return 1
+    fi
+
     Show 2 "Downloading db_admin_user setup script from: $SCRIPT_URL"
     if ! curl -fsSL "$SCRIPT_URL" -o "$SCRIPT_PATH"; then
         Show 1 "Failed to download DB setup script!"
         return 1
     fi
 
-    Show 2 "Executing DB setup script..."
-    if ! sudo -u postgres psql -f "$SCRIPT_PATH"; then
+    Show 2 "Executing DB setup script with the new password..."
+    if ! sudo -u postgres psql -v db_admin_password="$DB_ADMIN_PASSWORD" -f "$SCRIPT_PATH"; then
         Show 1 "Failed to execute DB setup script!"
         return 1
     fi
 
-    Show 2 "DB admin setup script completed successfully!"
+    set_ini_value "$APP_CONFIG_FILE" "app" "DBAdminPassword" $DB_ADMIN_PASSWORD
+
+    Show 0 "DB admin setup script completed successfully!"
 }
 Restart_Postgres_Service() {
     ${sudo_cmd} systemctl stop postgresql
