@@ -700,7 +700,6 @@ Configure_PgHba() {
 
     local RULES="
 # Added by CassetteOS installer
-host    all             db_admin_user   172.30.0.0/16            trust
 host    all             all             172.30.0.0/16           md5
 "
     if ! grep -q "172.30.0.0/16" "$PG_HBA"; then
