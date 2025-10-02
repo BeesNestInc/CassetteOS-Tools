@@ -36,9 +36,16 @@ else
     fi
 
     Show 2 "Setting new password for db_admin_user..."
-    if ! ${sudo_cmd} -u postgres psql -c "ALTER ROLE db_admin_user WITH PASSWORD '$DB_ADMIN_PASSWORD';"; then
-        Show 1 "Failed to set password for db_admin_user!"
-        exit 1
+    if [ -n "${sudo_cmd}" ]; then
+        if ! ${sudo_cmd} -u postgres psql -c "ALTER ROLE db_admin_user WITH PASSWORD '$DB_ADMIN_PASSWORD';"; then
+            Show 1 "Failed to set password for db_admin_user!"
+            exit 1
+        fi
+    else
+        if ! su - postgres -c "psql -c \"ALTER ROLE db_admin_user WITH PASSWORD '$DB_ADMIN_PASSWORD';\""; then
+            Show 1 "Failed to set password for db_admin_user!"
+            exit 1
+        fi
     fi
 
     Show 2 "Saving new password to $APP_CONFIG_FILE..."
@@ -49,7 +56,11 @@ echo ""
 
 # --- Remove Insecure Trust Auth from pg_hba.conf ---
 Show 2 "[v0.0.10] Checking pg_hba.conf for insecure trust rule..."
-PG_HBA=$(${sudo_cmd} -u postgres psql -t -P format=unaligned -c 'show hba_file';)
+if [ -n "${sudo_cmd}" ]; then
+    PG_HBA=$(${sudo_cmd} -u postgres psql -t -P format=unaligned -c 'show hba_file';)
+else
+    PG_HBA=$(su - postgres -c "psql -t -P format=unaligned -c 'show hba_file';")
+fi
 if [ -z "$PG_HBA" ]; then
     Show 3 "Could not determine pg_hba.conf location. Skipping."
 else
