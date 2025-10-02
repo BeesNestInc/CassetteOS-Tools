@@ -72,6 +72,7 @@ readonly CASSETTE_UNINSTALL_PATH=/usr/bin/cassetteos-uninstall
 # Udevil
 readonly UDEVIL_CONF_PATH=/etc/udevil/udevil.conf
 readonly DEVMON_CONF_PATH=/etc/conf.d/devmon
+readonly APP_CONFIG_FILE=/etc/cassetteos/app-management.conf
 
 # COLORS
 readonly COLOUR_RESET='\e[0m'
@@ -105,6 +106,13 @@ onCtrlC() {
     echo -e "${COLOUR_RESET}"
     exit 1
 }
+
+# Set up a temporary directory and ensure it's cleaned up on exit
+Show 2 "Creating temporary directory..."
+TMP_ROOT=/tmp/cassetteos-updater
+${sudo_cmd} mkdir -p ${TMP_ROOT} || { echo "Failed to create temp root. Exiting."; exit 1; }
+TMP_DIR=$(${sudo_cmd} mktemp -d -p ${TMP_ROOT} || { echo "Failed to create temp dir. Exiting."; exit 1; })
+trap 'Show 2 "Cleaning up temporary files..."; ${sudo_cmd} rm -rf "$TMP_ROOT"' EXIT
 
 
 upgradePath="/var/log/cassetteos"
@@ -363,18 +371,88 @@ Configuration_Addons() {
     fi
 }
 
-Create_Docker_Network_If_Not_Exists() {
-    Show 2 "Checking for cassetteos docker network..."
-    if [ -z "$(docker network ls -q -f name=cassetteos)" ]; then
-        Show 2 "cassetteos network not found. Creating..."
-        docker network create \
-            --driver bridge \
-            --subnet 172.30.0.0/16 \
-            cassetteos || Show 3 "Failed to create docker network. Maybe it already exists."
-        Show 0 "Docker network 'cassetteos' created or already exists."
-    else
-        Show 0 "Docker network 'cassetteos' already exists."
+Run_Migrations() {
+    local migration_dir="$1"
+    Show 2 "Checking for necessary migrations in $migration_dir..."
+    
+    local installed_version
+    if ! command -v /usr/bin/cassetteos >/dev/null 2>&1; then
+        Show 3 "CassetteOS executable not found, skipping migrations."
+        return
     fi
+
+    # Assuming 'cassetteos --version' returns something like "v0.0.9" or "cassetteos version v0.0.9"
+    installed_version=$(${sudo_cmd} /usr/bin/cassetteos --version | grep -o -E 'v[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+
+    if [ -z "$installed_version" ]; then
+        Show 3 "Could not determine installed CassetteOS version. Skipping migrations."
+        return
+    fi
+
+    Show 2 "Installed version: $installed_version. Checking for migration scripts..."
+
+    if [ ! -d "$migration_dir" ]; then
+        Show 0 "No migration directory found. Nothing to do."
+        return
+    fi
+
+    # Export helper functions and variables for migration scripts
+    export -f Show
+    export -f Warn
+    export -f set_ini_value
+    export APP_CONFIG_FILE
+    export sudo_cmd
+
+    for migration_file in $(ls "$migration_dir"/*.sh | sort -V); do
+        migration_version=$(basename "$migration_file" .sh) # e.g., v0.0.10
+        
+        # Compare installed version with the version of the migration script
+        if dpkg --compare-versions "${installed_version#v}" "lt" "${migration_version#v}"; then
+            Show 2 "Applying migration: $migration_file"
+            # Make sure script is executable
+            ${sudo_cmd} chmod +x "$migration_file"
+            if bash "$migration_file"; then
+                Show 0 "Successfully applied migration $migration_file"
+            else
+                Show 1 "Failed to apply migration $migration_file"
+                exit 1
+            fi
+        fi
+    done
+
+    Show 0 "All applicable migrations have been run."
+}
+
+Download_Migrations() {
+    Show 2 "Downloading migration scripts..."
+    local MIGRATION_URL="${CASSETTE_DOWNLOAD_DOMAIN}BeesNestInc/CassetteOS-Tools/releases/download/${CASSETTEOS_VERSION}/migration_scripts.tar.gz"
+
+    # This function assumes that the main script has already created TMP_DIR.
+    # If it fails to download, it will show a notice and return 1, allowing the update to continue.
+    if [ -z "$TMP_DIR" ] || [ ! -d "$TMP_DIR" ]; then
+        Show 1 "Temporary directory not available for migrations."
+        exit 1
+    fi
+
+    pushd "${TMP_DIR}" > /dev/null
+
+    Show 2 "Downloading from ${MIGRATION_URL}..."
+    if ! ${sudo_cmd} wget -t 3 -q -O "migration_scripts.tar.gz" "${MIGRATION_URL}"; then
+        Show 3 "Failed to download migration scripts. It might be that there are no migrations for this version. Skipping."
+        popd > /dev/null
+        return 1 # Use return code to signal Run_Migrations to skip
+    fi
+
+    Show 2 "Extracting migration scripts..."
+    if ! ${sudo_cmd} tar zxf "migration_scripts.tar.gz"; then
+        Show 1 "Failed to extract migration scripts."
+        popd > /dev/null
+        exit 1
+    fi
+
+    popd > /dev/null
+    Show 0 "Migration scripts downloaded and extracted."
+    return 0
 }
 
 # Download And Install CassetteOS
@@ -382,10 +460,7 @@ DownloadAndInstallCassetteOS() {
 
     if [ -z "${BUILD_DIR}" ]; then
 
-        ${sudo_cmd} mkdir -p ${TMP_ROOT} || Show 1 "Failed to create temporary directory"
-        TMP_DIR=$(${sudo_cmd} mktemp -d -p ${TMP_ROOT} || Show 1 "Failed to create temporary directory")
-
-        pushd "${TMP_DIR}"
+        pushd "${TMP_DIR}" > /dev/null
 
         for PACKAGE in "${CASSETTE_PACKAGES[@]}"; do
             Show 2 "Downloading ${PACKAGE}..."
@@ -512,7 +587,10 @@ Check_Depends_Installed "${CASSETTE_DEPENDS_LIST[@]}"
 # Step 3: Configuration Addon
 Configuration_Addons
 
-Create_Docker_Network_If_Not_Exists
+# Step 3.5: Run Migrations
+if Download_Migrations; then
+    Run_Migrations "$TMP_DIR/migration"
+fi
 
 # Step 4: Download And Install CassetteOS
 DownloadAndInstallCassetteOS
