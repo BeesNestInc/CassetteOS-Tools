@@ -108,11 +108,11 @@ onCtrlC() {
 }
 
 # Set up a temporary directory and ensure it's cleaned up on exit
-Show 2 "Creating temporary directory..."
+echo "Creating temporary directory..."
 TMP_ROOT=/tmp/cassetteos-updater
 ${sudo_cmd} mkdir -p ${TMP_ROOT} || { echo "Failed to create temp root. Exiting."; exit 1; }
 TMP_DIR=$(${sudo_cmd} mktemp -d -p ${TMP_ROOT} || { echo "Failed to create temp dir. Exiting."; exit 1; })
-trap 'Show 2 "Cleaning up temporary files..."; ${sudo_cmd} rm -rf "$TMP_ROOT"' EXIT
+trap 'echo "Cleaning up temporary files..."; ${sudo_cmd} rm -rf "$TMP_ROOT"' EXIT
 
 
 upgradePath="/var/log/cassetteos"
