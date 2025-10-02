@@ -593,4 +593,4 @@ if Download_Migrations; then
 fi
 
 # Step 4: Download And Install CassetteOS
-DownloadAndInstallCassetteOS
+#DownloadAndInstallCassetteOS
