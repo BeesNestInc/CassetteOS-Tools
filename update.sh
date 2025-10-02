@@ -363,6 +363,20 @@ Configuration_Addons() {
     fi
 }
 
+Create_Docker_Network_If_Not_Exists() {
+    Show 2 "Checking for cassetteos docker network..."
+    if [ -z "$(docker network ls -q -f name=cassetteos)" ]; then
+        Show 2 "cassetteos network not found. Creating..."
+        docker network create \
+            --driver bridge \
+            --subnet 172.30.0.0/16 \
+            cassetteos || Show 3 "Failed to create docker network. Maybe it already exists."
+        Show 0 "Docker network 'cassetteos' created or already exists."
+    else
+        Show 0 "Docker network 'cassetteos' already exists."
+    fi
+}
+
 # Download And Install CassetteOS
 DownloadAndInstallCassetteOS() {
 
@@ -497,6 +511,8 @@ Check_Depends_Installed "${CASSETTE_DEPENDS_LIST[@]}"
 
 # Step 3: Configuration Addon
 Configuration_Addons
+
+Create_Docker_Network_If_Not_Exists
 
 # Step 4: Download And Install CassetteOS
 DownloadAndInstallCassetteOS
