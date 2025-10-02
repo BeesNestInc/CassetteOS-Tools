@@ -183,6 +183,36 @@ exist_file() {
     fi
 }
 
+set_ini_value() {
+    local file="$1"
+    local section="$2"
+    local key="$3"
+    local value="$4"
+
+    # セクションが存在しない場合は末尾に追加
+    if ! grep -q "^\[$section\]" "$file"; then
+        echo -e "\n[$section]" >> "$file"
+    fi
+
+    # セクション行の行番号取得
+    local section_line
+    section_line=$(grep -n "^\[$section\]" "$file" | cut -d: -f1 | head -n1)
+
+    # セクションの次に同じキーが存在するか確認
+    if awk -v s="$section" -v k="$key" '
+        $0 ~ "\\[" s "\\]" { in_section=1; next }
+        /^\[.*\]/ { in_section=0 }
+        in_section && $1 == k { found=1 }
+        END { exit !found }
+    ' "$file"; then
+        # 上書き
+        sed -i "/^\[$section\]/, /^\[.*\]/ s|^$key *=.*|$key = $value|" "$file"
+    else
+        # セクション直下に追記
+        sed -i "$((section_line + 1)) i$key = $value" "$file"
+    fi
+}
+
 ###############################################################################
 # FUNCTIONS                                                                   #
 ###############################################################################
