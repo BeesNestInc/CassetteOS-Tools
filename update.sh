@@ -411,8 +411,8 @@ Run_Migrations() {
         return
     fi
 
-    # Assuming 'cassetteos --version' returns something like "v0.0.9" or "cassetteos version v0.0.9"
-    installed_version=$(${sudo_cmd} /usr/bin/cassetteos --version | grep -o -E 'v[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+    # Assuming 'cassetteos -v' returns something like "v0.0.9" or "cassetteos version v0.0.9"
+    installed_version=$(${sudo_cmd} /usr/bin/cassetteos -v | grep -o -E 'v[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
 
     if [ -z "$installed_version" ]; then
         Show 3 "Could not determine installed CassetteOS version. Skipping migrations."
